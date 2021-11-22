@@ -4,7 +4,17 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
+        sans: ["NotoSans", "sans-serif"],
         poker: ["ShipporiAntiqueB1", "sans-serif"],
+      },
+      colors: {
+        "poker-red": "#DC2626",
+        "poker-black": "#1F2937",
+        "poker-white": "#FFFFFF",
+        "poker-soft-white": "#F9FAFB",
+      },
+      width: {
+        112: "28rem",
       },
     },
   },
