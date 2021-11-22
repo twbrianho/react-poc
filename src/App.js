@@ -1,17 +1,22 @@
-import PokerDeck from "./poker_cards.js";
-import PokerCard from "./components/PokerCard";
 import "./App.css";
 
-const App = () => {
-  const deck = new PokerDeck();
-  deck.shuffle();
-  const [card1, card2] = deck.deal(2);
-  return (
-    <div className="">
-      <PokerCard suit={card1.suit} rank={card1.rank} />
-      <PokerCard suit={card2.suit} rank={card2.rank} />
-    </div>
-  );
-};
+import { Client } from "boardgame.io/react";
+import { Local } from "boardgame.io/multiplayer";
+import { LimitHoldEm } from "./Game";
+import { LimitHoldEmBoard } from "./Board";
+
+const LimitHoldEmClient = Client({
+  game: LimitHoldEm,
+  numPlayers: 2,
+  board: LimitHoldEmBoard,
+  multiplayer: Local(),
+});
+
+const App = () => (
+  <div>
+    <LimitHoldEmClient playerID="0" />
+    {/* <LimitHoldEmClient playerID="1" /> */}
+  </div>
+);
 
 export default App;

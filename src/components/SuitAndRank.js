@@ -1,41 +1,22 @@
-const RankDisplay = {
-  TWO: "2",
-  THREE: "3",
-  FOUR: "4",
-  FIVE: "5",
-  SIX: "6",
-  SEVEN: "7",
-  EIGHT: "8",
-  NINE: "9",
-  TEN: "10",
-  JACK: "J",
-  QUEEN: "Q",
-  KING: "K",
-  ACE: "A",
-};
+import { SuitToDisplayMap, RankToDisplayMap } from "../Constants.js";
 
 const SuitAndRank = (props) => {
-  const color = ["DIAMONDS", "HEARTS"].includes(props.suit)
-    ? "text-red-500"
-    : "text-gray-800";
-  const font = "font-poker";
-  const classes = [color, font, props.className].join(" ");
+  const suit_str = props.card_str.slice(0, 1);
+  const rank_str = props.card_str.slice(1);
 
-  let suit = "?";
-  if (props.suit === "CLUBS") {
-    suit = "♣";
-  } else if (props.suit === "DIAMONDS") {
-    suit = "♦";
-  } else if (props.suit === "HEARTS") {
-    suit = "♥";
-  } else if (props.suit === "SPADES") {
-    suit = "♠";
-  }
-  let rank = RankDisplay[props.rank];
+  const color = ["D", "H"].includes(suit_str)
+    ? "text-poker-red"
+    : "text-poker-black";
+  const font = "font-poker";
+  const pos = "flex flex-col justify-center pb-2";
+  const classes = [color, font, pos, props.className].join(" ");
+
+  const suit = SuitToDisplayMap.get(suit_str);
+  const rank = RankToDisplayMap.get(rank_str);
   return (
     <div className={classes}>
-      {rank}
-      {suit}
+      <div className="text-2xl">{rank}</div>
+      <div className="text-5xl">{suit}</div>
     </div>
   );
 };
