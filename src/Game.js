@@ -59,7 +59,7 @@ export const LimitHoldEm = {
   },
 
   minPlayers: 2,
-  maxPlayers: 2, // Temporary limit
+  maxPlayers: 10,
 
   turn: {
     minMoves: 1,
