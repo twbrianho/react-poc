@@ -17,7 +17,7 @@ const SuitAndRank = (props) => {
   const classes = [color, font, pos, props.className].join(" ");
 
   const suit = SuitToDisplayMap.get(suit_str);
-  const rank = RankToDisplayMap.get(rank_str);
+  const rank = RankToDisplayMap.get(parseInt(rank_str));
   return (
     <div className={classes}>
       <div className="text-2xl">{rank}</div>

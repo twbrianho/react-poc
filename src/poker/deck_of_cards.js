@@ -1,4 +1,4 @@
-import { ALL_SUITS, ALL_RANKS } from "./constants.js";
+import { SuitToDisplayMap, RankToDisplayMap } from "./constants.js";
 
 export function initDeck() {
   let cards = [];
@@ -7,8 +7,9 @@ export function initDeck() {
     return;
   }
 
-  for (const suit of ALL_SUITS) {
-    for (const rank of ALL_RANKS) {
+  console.log("Building deck...");
+  for (const suit of SuitToDisplayMap.keys()) {
+    for (const rank of RankToDisplayMap.keys()) {
       // e.g. Ace of clubs = "C14", 2 of spades = "S2"
       cards.push(suit + rank);
     }

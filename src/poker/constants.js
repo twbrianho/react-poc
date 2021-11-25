@@ -18,7 +18,6 @@ export const RankToDisplayMap = new Map([
   [K, "K"],
   [A, "A"],
 ]);
-export const ALL_RANKS = RankToDisplayMap.keys();
 
 // SUITS
 export const CLUB = "C",
@@ -31,7 +30,6 @@ export const SuitToDisplayMap = new Map([
   [HEART, "♥"],
   [SPADE, "♠"],
 ]);
-export const ALL_SUITS = SuitToDisplayMap.keys();
 
 // GAME PHASES
 export const GamePhase = {
