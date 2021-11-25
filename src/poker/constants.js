@@ -1,77 +1,84 @@
 // RANKS
-export const RANK_2 = "02",
-  RANK_3 = "03",
-  RANK_4 = "04",
-  RANK_5 = "05",
-  RANK_6 = "06",
-  RANK_7 = "07",
-  RANK_8 = "08",
-  RANK_9 = "09",
-  RANK_10 = "10",
-  RANK_J = "J",
-  RANK_Q = "Q",
-  RANK_K = "K",
-  RANK_A = "A";
+export const J = 11,
+  Q = 12,
+  K = 13,
+  A = 14;
 export const RankToDisplayMap = new Map([
-  [RANK_2, "2"],
-  [RANK_3, "3"],
-  [RANK_4, "4"],
-  [RANK_5, "5"],
-  [RANK_6, "6"],
-  [RANK_7, "7"],
-  [RANK_8, "8"],
-  [RANK_9, "9"],
-  [RANK_10, "10"],
-  [RANK_J, "J"],
-  [RANK_Q, "Q"],
-  [RANK_K, "K"],
-  [RANK_A, "A"],
+  [2, "2"],
+  [3, "3"],
+  [4, "4"],
+  [5, "5"],
+  [6, "6"],
+  [7, "7"],
+  [8, "8"],
+  [9, "9"],
+  [10, "10"],
+  [J, "J"],
+  [Q, "Q"],
+  [K, "K"],
+  [A, "A"],
 ]);
 export const ALL_RANKS = RankToDisplayMap.keys();
 
 // SUITS
-export const CLUBS = "C",
-  DIAMONDS = "D",
-  HEARTS = "H",
-  SPADES = "S";
+export const CLUB = "C",
+  DIAMOND = "D",
+  HEART = "H",
+  SPADE = "S";
 export const SuitToDisplayMap = new Map([
-  [CLUBS, "♣"],
-  [DIAMONDS, "♦"],
-  [HEARTS, "♥"],
-  [SPADES, "♠"],
+  [CLUB, "♣"],
+  [DIAMOND, "♦"],
+  [HEART, "♥"],
+  [SPADE, "♠"],
 ]);
 export const ALL_SUITS = SuitToDisplayMap.keys();
 
 // GAME PHASES
-export const BETTING = "BET",
-  FLOP = "FLP",
-  TURN = "TRN",
-  RIVER = "RVR",
-  SHOWDOWN = "SHW";
+export const GamePhase = {
+  BETTING: "BET",
+  FLOP: "FLP",
+  TURN: "TRN",
+  RIVER: "RVR",
+  SHOWDOWN: "SHW",
+};
 export const GamePhaseToDisplayMap = new Map([
-  [BETTING, "Betting"],
-  [FLOP, "Flop"],
-  [TURN, "Turn"],
-  [RIVER, "River"],
-  [SHOWDOWN, "Showdown"],
+  [GamePhase.BETTING, "Betting"],
+  [GamePhase.FLOP, "Flop"],
+  [GamePhase.TURN, "Turn"],
+  [GamePhase.RIVER, "River"],
+  [GamePhase.SHOWDOWN, "Showdown"],
 ]);
 
 // PLAYER MOVES
-export const NONE = "NONE",
-  BET = "BET",
-  RAISE = "RAISE",
-  CALL = "CALL",
-  FOLD = "FOLD",
-  CHECK = "CHECK",
-  ALL_IN = "ALLIN";
-export const PlayerMoves = new Map([
-  [NONE, 0],
-  [BET, 1],
-  [RAISE, 2],
-  [CALL, 3],
-  [FOLD, 4],
-  [CHECK, 5],
-  [ALL_IN, 6],
+export const PlayerMove = {
+  NONE: "NONE",
+  BET: "BET",
+  RAISE: "RAISE",
+  CALL: "CALL",
+  FOLD: "FOLD",
+  CHECK: "CHECK",
+  ALL_IN: "ALLIN",
+};
+export const PlayerMoveToDisplayMap = new Map([
+  [PlayerMove.NONE, ""],
+  [PlayerMove.BET, "Bet"],
+  [PlayerMove.RAISE, "Raise"],
+  [PlayerMove.CALL, "Call"],
+  [PlayerMove.FOLD, "Fold"],
+  [PlayerMove.CHECK, "Check"],
+  [PlayerMove.ALL_IN, "All In"],
+]);
+
+// PLAYER STATES
+export const PlayerState = {
+  IN: "IN",
+  FOLDED: "FOLDED",
+  OUT: "OUT",
+};
+export const PlayerStateToDisplayMap = new Map([
+  [PlayerState.IN, "In"],
+  [PlayerState.FOLDED, "Folded"],
+  [PlayerState.OUT, "Out"],
 ]);
 
 // HANDS

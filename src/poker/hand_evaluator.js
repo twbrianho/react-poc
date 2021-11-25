@@ -1,27 +1,47 @@
-// Source: https://www.codeproject.com/Articles/569271/A-Poker-hand-analyzer-in-JavaScript-using-bit-math
-// NOTE: This is licensed under The Code Project Open License (CPOL) 1.02
+import {
+  FOUR_OF_A_KIND,
+  STRAIGHT,
+  STRAIGHT_FLUSH,
+  FLUSH,
+  HIGH_CARD,
+  PAIR,
+  TWO_PAIR,
+  ROYAL_FLUSH,
+  THREE_OF_A_KIND,
+  FULL_HOUSE,
+} from "./constants";
 
-const hands = [
-  "4 of a Kind",
-  "Straight Flush",
-  "Straight",
-  "Flush",
-  "High Card",
-  "1 Pair",
-  "2 Pair",
-  "Royal Flush",
-  "3 of a Kind",
-  "Full House",
+// This is used EXCLUSIVELY for the hand evaluator.
+const HandMap = [
+  FOUR_OF_A_KIND,
+  STRAIGHT_FLUSH,
+  STRAIGHT,
+  FLUSH,
+  HIGH_CARD,
+  PAIR,
+  TWO_PAIR,
+  ROYAL_FLUSH,
+  THREE_OF_A_KIND,
+  FULL_HOUSE,
 ];
 
-const A = 14,
-  K = 13,
-  Q = 12,
-  J = 11,
-  _ = { "♠": 1, "♣": 2, "♥": 4, "♦": 8 };
+// This is used EXCLUSIVELY for the hand evaluator.
+const SuitMap = {
+  C: 1,
+  D: 2,
+  H: 4,
+  S: 8,
+};
 
-//Calculates the Rank of a 5 card Poker hand using bit manipulations.
 export function rankPokerHand(cs, ss) {
+  /* 
+  Calculates the Rank of a 5 card Poker hand using bit manipulations.
+  cs: Array of card values (int: 2-14)
+  ss: Array of card suits (char: "C", "D", "H", "S")
+
+  NOTE: This is someone else's code, licensed under The Code Project Open License (CPOL) 1.02
+  https://www.codeproject.com/Articles/569271/A-Poker-hand-analyzer-in-JavaScript-using-bit-math
+  */
   let v,
     i,
     o,
@@ -31,19 +51,9 @@ export function rankPokerHand(cs, ss) {
     v += o * (((v / o) & 15) + 1);
   }
   v = (v % 15) - (s / (s & -s) === 31 || s === 0x403c ? 3 : 1);
-  v -= (ss[0] === (ss[1] | ss[2] | ss[3] | ss[4])) * (s === 0x7c00 ? -5 : 1);
-  return hands[v] + (s === 0x403c ? " (Ace low)" : "");
+  v -=
+    (SuitMap[ss[0]] ===
+      (SuitMap[ss[1]] | SuitMap[ss[2]] | SuitMap[ss[3]] | SuitMap[ss[4]])) *
+    (s === 0x7c00 ? -5 : 1);
+  return HandMap[v];
 }
-
-rankPokerHand([10, J, Q, K, A], [_["♠"], _["♠"], _["♠"], _["♠"], _["♠"]]); // Royal Flush
-rankPokerHand([4, 5, 6, 7, 8], [_["♠"], _["♠"], _["♠"], _["♠"], _["♠"]]); // Straight Flush
-rankPokerHand([2, 3, 4, 5, A], [_["♠"], _["♠"], _["♠"], _["♠"], _["♠"]]); // Straight Flush
-rankPokerHand([8, 8, 8, 8, 9], [_["♠"], _["♣"], _["♥"], _["♦"], _["♠"]]); // 4 of a Kind
-rankPokerHand([7, 7, 7, 9, 9], [_["♠"], _["♣"], _["♥"], _["♠"], _["♣"]]); // Full house
-rankPokerHand([10, J, 6, K, 9], [_["♣"], _["♣"], _["♣"], _["♣"], _["♣"]]); // Flush
-rankPokerHand([10, J, Q, K, 9], [_["♠"], _["♣"], _["♥"], _["♣"], _["♦"]]); // Straight
-rankPokerHand([2, 3, 4, 5, A], [_["♠"], _["♣"], _["♥"], _["♣"], _["♦"]]); // Straight
-rankPokerHand([4, 4, 4, 8, 9], [_["♠"], _["♣"], _["♥"], _["♠"], _["♣"]]); // 3 of a Kind
-rankPokerHand([8, 8, J, 9, 9], [_["♠"], _["♣"], _["♥"], _["♠"], _["♣"]]); // 2 Pair
-rankPokerHand([8, 8, 3, 5, 9], [_["♠"], _["♣"], _["♥"], _["♠"], _["♣"]]); // 1 Pair
-rankPokerHand([10, 5, 4, 7, 9], [_["♠"], _["♣"], _["♥"], _["♠"], _["♣"]]); // High Card

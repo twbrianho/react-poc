@@ -1,10 +1,15 @@
-import { SuitToDisplayMap, RankToDisplayMap } from "../poker/constants.js";
+import {
+  SuitToDisplayMap,
+  RankToDisplayMap,
+  DIAMOND,
+  HEART,
+} from "../poker/constants.js";
 
 const SuitAndRank = (props) => {
   const suit_str = props.card_str.slice(0, 1);
   const rank_str = props.card_str.slice(1);
 
-  const color = ["D", "H"].includes(suit_str)
+  const color = [DIAMOND, HEART].includes(suit_str)
     ? "text-poker-red"
     : "text-poker-black";
   const font = "font-poker";

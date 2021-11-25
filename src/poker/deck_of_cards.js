@@ -9,6 +9,7 @@ export function initDeck() {
 
   for (const suit of ALL_SUITS) {
     for (const rank of ALL_RANKS) {
+      // e.g. Ace of clubs = "C14", 2 of spades = "S2"
       cards.push(suit + rank);
     }
   }
@@ -22,12 +23,4 @@ export function initDeck() {
   }
 
   return cards;
-}
-
-function deal(deck, numCards = 1) {
-  let dealtCards = [];
-  for (let i = 0; i < numCards; i++) {
-    dealtCards.push(deck.pop());
-  }
-  return dealtCards;
 }

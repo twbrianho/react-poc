@@ -1,4 +1,4 @@
-import { PlayerStates, PlayerMoves } from "./poker/constants.js";
+import { PlayerState, PlayerMove } from "./poker/constants.js";
 import { initDeck } from "./poker/deck_of_cards.js";
 
 const SmallBlind = 2;
@@ -6,12 +6,12 @@ const BigBlind = 4;
 
 function check(G, ctx) {
   const currPlayer = ctx.currentPlayer;
-  G.playerLastMoves[currPlayer] = PlayerMoves.get("CHECK");
+  G.playerLastMoves[currPlayer] = PlayerMove.CHECK;
 }
 
 function call(G, ctx) {
   const currPlayer = ctx.currentPlayer;
-  G.playerLastMoves[currPlayer] = PlayerMoves.get("CALL");
+  G.playerLastMoves[currPlayer] = PlayerMove.CALL;
   let bet = SmallBlind;
   if (["TURN", "RIVER"].includes(ctx.phase)) {
     bet = BigBlind;
@@ -22,7 +22,7 @@ function call(G, ctx) {
 
 function raise(G, ctx) {
   const currPlayer = ctx.currentPlayer;
-  G.playerLastMoves[currPlayer] = PlayerMoves.get("RAISE");
+  G.playerLastMoves[currPlayer] = PlayerMove.RAISE;
   let bet = SmallBlind * 2;
   if (["TURN", "RIVER"].includes(ctx.phase)) {
     bet = BigBlind * 2;
@@ -33,8 +33,8 @@ function raise(G, ctx) {
 
 function fold(G, ctx) {
   const currPlayer = ctx.currentPlayer;
-  G.playerLastMoves[currPlayer] = PlayerMoves.get("FOLD");
-  G.playerStates[currPlayer] = PlayerStates.get("OUT");
+  G.playerLastMoves[currPlayer] = PlayerMove.FOLD;
+  G.playerStates[currPlayer] = PlayerState.OUT;
 }
 
 export const LimitHoldEm = {
@@ -51,8 +51,8 @@ export const LimitHoldEm = {
       turnCard: "",
       riverCard: "",
       potChips: 0,
-      playerStates: Array(ctx.numPlayers).fill(PlayerStates.get("BETTING")),
-      playerLastMoves: Array(ctx.numPlayers).fill(PlayerMoves.get("NONE")),
+      playerStates: Array(ctx.numPlayers).fill(PlayerState.BETTING),
+      playerLastMoves: Array(ctx.numPlayers).fill(PlayerMove.NONE),
       playerCards: playerCards,
       playerChips: Array(ctx.numPlayers).fill(100),
     };
@@ -84,10 +84,10 @@ export const LimitHoldEm = {
       onBegin: (G, ctx) => {
         G.flopCards = G.deck.splice(0, 3);
         for (let i = 0; i < ctx.numPlayers; i++) {
-          if (G.playerStates[i] === PlayerStates.get("OUT")) {
-            G.playerLastMoves[i] = PlayerMoves.get("FOLD");
+          if (G.playerStates[i] === PlayerState.OUT) {
+            G.playerLastMoves[i] = PlayerMove.FOLD;
           } else {
-            G.playerLastMoves[i] = PlayerMoves.get("NONE");
+            G.playerLastMoves[i] = PlayerMove.NONE;
           }
         }
       },
@@ -123,6 +123,6 @@ export const LimitHoldEm = {
   },
 
   endIf: (G, ctx) => {
-    return G.playerStates.every((state) => state === PlayerStates.OUT);
+    return G.playerStates.every((state) => state === PlayerState.OUT);
   },
 };
