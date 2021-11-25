@@ -21,7 +21,7 @@ const A = 14,
   _ = { "♠": 1, "♣": 2, "♥": 4, "♦": 8 };
 
 //Calculates the Rank of a 5 card Poker hand using bit manipulations.
-function rankPokerHand(cs, ss) {
+export function rankPokerHand(cs, ss) {
   let v,
     i,
     o,
@@ -32,7 +32,7 @@ function rankPokerHand(cs, ss) {
   }
   v = (v % 15) - (s / (s & -s) === 31 || s === 0x403c ? 3 : 1);
   v -= (ss[0] === (ss[1] | ss[2] | ss[3] | ss[4])) * (s === 0x7c00 ? -5 : 1);
-  return "Hand: " + hands[v] + (s === 0x403c ? " (Ace low)" : "");
+  return hands[v] + (s === 0x403c ? " (Ace low)" : "");
 }
 
 rankPokerHand([10, J, Q, K, A], [_["♠"], _["♠"], _["♠"], _["♠"], _["♠"]]); // Royal Flush

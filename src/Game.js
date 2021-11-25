@@ -1,5 +1,5 @@
-import { PlayerStates, PlayerMoves } from "./Constants.js";
-import { initDeck } from "./DeckOfCards.js";
+import { PlayerStates, PlayerMoves } from "./poker/constants.js";
+import { initDeck } from "./poker/deck_of_cards.js";
 
 const SmallBlind = 2;
 const BigBlind = 4;

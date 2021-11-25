@@ -1,4 +1,4 @@
-import { SuitToDisplayMap, RankToDisplayMap } from "./Constants.js";
+import { ALL_SUITS, ALL_RANKS } from "./constants.js";
 
 export function initDeck() {
   let cards = [];
@@ -7,8 +7,8 @@ export function initDeck() {
     return;
   }
 
-  for (const suit of SuitToDisplayMap.keys()) {
-    for (const rank of RankToDisplayMap.keys()) {
+  for (const suit of ALL_SUITS) {
+    for (const rank of ALL_RANKS) {
       cards.push(suit + rank);
     }
   }
@@ -24,10 +24,10 @@ export function initDeck() {
   return cards;
 }
 
-// function deal(numCards = 1) {
-//   let dealtCards = [];
-//   for (let i = 0; i < numCards; i++) {
-//     dealtCards.push(cards.pop());
-//   }
-//   return dealtCards;
-// }
+function deal(deck, numCards = 1) {
+  let dealtCards = [];
+  for (let i = 0; i < numCards; i++) {
+    dealtCards.push(deck.pop());
+  }
+  return dealtCards;
+}

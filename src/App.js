@@ -3,7 +3,7 @@ import "./App.css";
 import { Client } from "boardgame.io/react";
 import { Local } from "boardgame.io/multiplayer";
 import { LimitHoldEm } from "./Game";
-import { LimitHoldEmBoard } from "./Board";
+import { LimitHoldEmBoard } from "./components/Board";
 
 const LimitHoldEmClient = Client({
   game: LimitHoldEm,

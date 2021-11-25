@@ -1,4 +1,4 @@
-import { SuitToDisplayMap, RankToDisplayMap } from "../Constants.js";
+import { SuitToDisplayMap, RankToDisplayMap } from "../poker/constants.js";
 
 const SuitAndRank = (props) => {
   const suit_str = props.card_str.slice(0, 1);

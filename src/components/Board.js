@@ -1,6 +1,6 @@
 import React from "react";
-import PokerCard from "./components/PokerCard";
-import MoveButton from "./components/MoveButton";
+import PokerCard from "./PokerCard";
+import MoveButton from "./MoveButton";
 
 export class LimitHoldEmBoard extends React.Component {
   checkHandler() {
