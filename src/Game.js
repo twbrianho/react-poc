@@ -40,6 +40,7 @@ function fold(G, ctx) {
 export const LimitHoldEm = {
   name: "limit-hold-em",
   setup: (ctx) => {
+    console.log("Setting up new game...");
     let deck = initDeck();
     let playerCards = Array(ctx.numPlayers).fill([]);
     for (let i = 0; i < ctx.numPlayers; i++) {
