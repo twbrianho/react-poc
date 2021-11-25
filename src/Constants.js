@@ -21,6 +21,19 @@ export const SuitToDisplayMap = new Map([
   ["S", "♠"],
 ]);
 
+export const HandToDisplayMap = new Map([
+  [0, "4 of a Kind"],
+  [1, "Straight Flush"],
+  [2, "Straight"],
+  [3, "Flush"],
+  [4, "High Card"],
+  [5, "1 Pair"],
+  [6, "2 Pair"],
+  [7, "Royal Flush"],
+  [8, "3 of a Kind"],
+  [9, "Full House"],
+]);
+
 export const PlayerStates = new Map([
   ["BETTING", 0], // Starting state for each phase.
   ["READY", 1], // Player has bet and is ready to play.
