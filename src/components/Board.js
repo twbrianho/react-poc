@@ -2,7 +2,10 @@ import React from "react";
 import PokerCard from "./PokerCard";
 import MoveButton from "./MoveButton";
 
-export class LimitHoldEmBoard extends React.Component {
+export class TexasHoldEmBoard extends React.Component {
+  betHandler() {
+    this.props.moves.bet();
+  }
   checkHandler() {
     this.props.moves.check();
   }
@@ -17,6 +20,7 @@ export class LimitHoldEmBoard extends React.Component {
   }
 
   render() {
+    const playerID = this.props.playerID;
     return (
       <div className="">
         <div className="m-10 space-y-5">
@@ -39,8 +43,8 @@ export class LimitHoldEmBoard extends React.Component {
             Your Hand:
           </div>
           <div className="flex justify-center items-center space-x-5">
-            <PokerCard card_str={this.props.G.myCards[0]} />
-            <PokerCard card_str={this.props.G.myCards[1]} />
+            <PokerCard card_str={this.props.G.playerCards[playerID][0]} />
+            <PokerCard card_str={this.props.G.playerCards[playerID][1]} />
           </div>
         </div>
         <div className="relative mx-20 my-3 px-4 py-3 bg-wavy rounded-xl shadow-xl flex justify-ends items-center space-x-5">
@@ -57,7 +61,7 @@ export class LimitHoldEmBoard extends React.Component {
             id="stats"
             className="h-48 w-64 px-4 py-3 text-lg tracking-wider text-poker-soft-white overflow-scroll flex flex-col justify-between"
           >
-            <div>Chips: {this.props.G.playerChips[0]}</div>
+            <div>Chips: ${this.props.G.playerChips[playerID]}</div>
             <div>Games Played: 0</div>
             <div>Wins: 0</div>
             <div>Folds: 0</div>

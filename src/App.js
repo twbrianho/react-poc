@@ -2,20 +2,20 @@ import "./App.css";
 
 import { Client } from "boardgame.io/react";
 import { Local } from "boardgame.io/multiplayer";
-import { LimitHoldEm } from "./Game";
-import { LimitHoldEmBoard } from "./components/Board";
+import { TexasHoldEm } from "./Game";
+import { TexasHoldEmBoard } from "./components/Board";
 
-const LimitHoldEmClient = Client({
-  game: LimitHoldEm,
+const TexasHoldEmClient = Client({
+  game: TexasHoldEm,
   numPlayers: 2,
-  board: LimitHoldEmBoard,
+  board: TexasHoldEmBoard,
   multiplayer: Local(),
 });
 
 const App = () => (
   <div>
-    <LimitHoldEmClient playerID="0" />
-    {/* <LimitHoldEmClient playerID="1" /> */}
+    <TexasHoldEmClient playerID="0" />
+    <TexasHoldEmClient playerID="1" />
   </div>
 );
 

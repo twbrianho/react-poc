@@ -3,7 +3,7 @@ export const J = 11,
   Q = 12,
   K = 13,
   A = 14;
-export const RankToDisplayMap = new Map([
+export const RANK_TO_DISPLAY_MAP = new Map([
   [2, "2"],
   [3, "3"],
   [4, "4"],
@@ -24,7 +24,7 @@ export const CLUB = "C",
   DIAMOND = "D",
   HEART = "H",
   SPADE = "S";
-export const SuitToDisplayMap = new Map([
+export const SUIT_TO_DISPLAY_MAP = new Map([
   [CLUB, "♣"],
   [DIAMOND, "♦"],
   [HEART, "♥"],
@@ -32,23 +32,24 @@ export const SuitToDisplayMap = new Map([
 ]);
 
 // GAME PHASES
-export const GamePhase = {
+export const GAME_PHASE = {
   BETTING: "BET",
   FLOP: "FLP",
   TURN: "TRN",
   RIVER: "RVR",
   SHOWDOWN: "SHW",
 };
-export const GamePhaseToDisplayMap = new Map([
-  [GamePhase.BETTING, "Betting"],
-  [GamePhase.FLOP, "Flop"],
-  [GamePhase.TURN, "Turn"],
-  [GamePhase.RIVER, "River"],
-  [GamePhase.SHOWDOWN, "Showdown"],
+export const GAME_PHASE_TO_DISPLAY_MAP = new Map([
+  [GAME_PHASE.BETTING, "Betting"],
+  [GAME_PHASE.FLOP, "Flop"],
+  [GAME_PHASE.TURN, "Turn"],
+  [GAME_PHASE.RIVER, "River"],
+  [GAME_PHASE.SHOWDOWN, "Showdown"],
 ]);
 
 // PLAYER MOVES
-export const PlayerMove = {
+// Note: Not sure how this will be used yet, but I have a feeling it will be handy.
+export const PLAYER_MOVE = {
   NONE: "NONE",
   BET: "BET",
   RAISE: "RAISE",
@@ -57,26 +58,28 @@ export const PlayerMove = {
   CHECK: "CHECK",
   ALL_IN: "ALLIN",
 };
-export const PlayerMoveToDisplayMap = new Map([
-  [PlayerMove.NONE, ""],
-  [PlayerMove.BET, "Bet"],
-  [PlayerMove.RAISE, "Raise"],
-  [PlayerMove.CALL, "Call"],
-  [PlayerMove.FOLD, "Fold"],
-  [PlayerMove.CHECK, "Check"],
-  [PlayerMove.ALL_IN, "All In"],
+export const PLAYER_MOVE_TO_DISPLAY_MAP = new Map([
+  [PLAYER_MOVE.NONE, ""],
+  [PLAYER_MOVE.BET, "Bet"],
+  [PLAYER_MOVE.RAISE, "Raise"],
+  [PLAYER_MOVE.CALL, "Call"],
+  [PLAYER_MOVE.FOLD, "Fold"],
+  [PLAYER_MOVE.CHECK, "Check"],
+  [PLAYER_MOVE.ALL_IN, "All In"],
 ]);
 
 // PLAYER STATES
-export const PlayerState = {
+export const PLAYER_STATE = {
   IN: "IN",
+  ALL_IN: "ALLIN",
   FOLDED: "FOLDED",
   OUT: "OUT",
 };
-export const PlayerStateToDisplayMap = new Map([
-  [PlayerState.IN, "In"],
-  [PlayerState.FOLDED, "Folded"],
-  [PlayerState.OUT, "Out"],
+export const PLAYER_STATE_TO_DISPLAY_MAP = new Map([
+  [PLAYER_STATE.IN, "In"],
+  [PLAYER_STATE.ALL_IN, "All In"],
+  [PLAYER_STATE.FOLDED, "Folded"],
+  [PLAYER_STATE.OUT, "Out"],
 ]);
 
 // HANDS
@@ -91,7 +94,7 @@ export const NO_CONTEST = "NO_CONTEST",
   FOUR_OF_A_KIND = "FOUR_OF_A_KIND",
   STRAIGHT_FLUSH = "STRAIGHT_FLUSH",
   ROYAL_FLUSH = "ROYAL_FLUSH";
-export const HandToValueMap = new Map([
+export const HAND_TO_VALUE_MAP = new Map([
   [NO_CONTEST, 0], // For players that aren't participating in the hand.
   [HIGH_CARD, 1],
   [PAIR, 2],
@@ -104,7 +107,7 @@ export const HandToValueMap = new Map([
   [STRAIGHT_FLUSH, 9],
   [ROYAL_FLUSH, 10],
 ]);
-export const HandToDisplayMap = new Map([
+export const HAND_TO_DISPLAY_MAP = new Map([
   [NO_CONTEST, "No Contest"], // For players that aren't participating in the hand.
   [HIGH_CARD, "High Card"],
   [PAIR, "Pair"],
@@ -117,4 +120,3 @@ export const HandToDisplayMap = new Map([
   [STRAIGHT_FLUSH, "Straight Flush"],
   [ROYAL_FLUSH, "Royal Flush"],
 ]);
-export const ALL_HANDS = HandToDisplayMap.keys();

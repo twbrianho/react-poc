@@ -1,13 +1,14 @@
+import { getSuit, getRank } from "../poker/card.js";
 import {
-  SuitToDisplayMap,
-  RankToDisplayMap,
+  SUIT_TO_DISPLAY_MAP,
+  RANK_TO_DISPLAY_MAP,
   DIAMOND,
   HEART,
 } from "../poker/constants.js";
 
 const SuitAndRank = (props) => {
-  const suit_str = props.card_str.slice(0, 1);
-  const rank_str = props.card_str.slice(1);
+  const suit_str = getSuit(props.card_str);
+  const rank_str = getRank(props.card_str);
 
   const color = [DIAMOND, HEART].includes(suit_str)
     ? "text-poker-red"
@@ -16,8 +17,8 @@ const SuitAndRank = (props) => {
   const pos = "flex flex-col justify-center pb-2";
   const classes = [color, font, pos, props.className].join(" ");
 
-  const suit = SuitToDisplayMap.get(suit_str);
-  const rank = RankToDisplayMap.get(parseInt(rank_str));
+  const suit = SUIT_TO_DISPLAY_MAP.get(suit_str);
+  const rank = RANK_TO_DISPLAY_MAP.get(parseInt(rank_str));
   return (
     <div className={classes}>
       <div className="text-2xl">{rank}</div>
