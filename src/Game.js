@@ -3,18 +3,21 @@ import { PLAYER_STATE, PLAYER_MOVE } from "./poker/constants.js";
 import { initDeck } from "./poker/deck-of-cards.js";
 import { getWinningPlayersIDsAndHands } from "./poker/showdown.js";
 import { getNthNextActivePlayerID } from "./utils/players.js";
-
-const SMALL_BLIND = 5;
-const BIG_BLIND = 10;
+import { STARTING_CHIPS, SMALL_BLIND, BIG_BLIND } from "./constants.js";
 
 // MOVES
 const bet = (G, ctx, amount) => {
+  // TODO: Consider consolidating this into raise(), and only show differently on GUI.
   // Only usable in PRE-FLOP(PRE-BET)
   if (!G.preBet) {
+    console.log("Invalid move: a bet has already been made.");
     return INVALID_MOVE;
   }
   // The bet has to be at least the current stake (which should be the big blind).
   if (amount < G.currentStake) {
+    console.log(
+      "Invalid move: the bet amount should be larger than the big blind."
+    );
     return INVALID_MOVE;
   }
   G.playerChips[ctx.currentPlayer] -= amount;
@@ -125,7 +128,7 @@ export const TexasHoldEm = {
       playerStates: Array(ctx.numPlayers).fill(PLAYER_STATE.IN), // Current state of each player.
       playerLastMoves: Array(ctx.numPlayers).fill(PLAYER_MOVE.NONE), // Last move made by each player.
       playerCards: Array(ctx.numPlayers).fill([]), // 2D array, representing each player's cards, e.g. [["2H", "3H"], ["2D", "3D"]].
-      playerChips: Array(ctx.numPlayers).fill(100), // The amount of chips each player has.
+      playerChips: Array(ctx.numPlayers).fill(STARTING_CHIPS), // The amount of chips each player has.
       playerStakes: Array(ctx.numPlayers).fill(0), // The amount each player has bet, including blinds. The sum of this is the pot.
       currentStake: 0, // The amount each player has bet. This is the amount each player has to call.
     };
@@ -162,7 +165,6 @@ export const TexasHoldEm = {
         for (let i = 0; i < ctx.numPlayers; i++) {
           G.playerCards[i] = G.deck.splice(0, 2);
         }
-        // Turn starts with dealer; end dealer's turn.
         G.dealerID = getNthNextActivePlayerID(G, ctx, ctx.currentPlayer, -3);
         console.log(`Player ${G.dealerID} finished dealing.`);
         // Player after dealer pays small blind.
@@ -174,6 +176,7 @@ export const TexasHoldEm = {
         G.bigBlindPlayerID = getNthNextActivePlayerID(G, ctx, G.dealerID, 2);
         G.playerStakes[G.bigBlindPlayerID] += BIG_BLIND;
         G.playerChips[G.bigBlindPlayerID] -= BIG_BLIND;
+        G.currentStake = BIG_BLIND;
         console.log(`Player ${G.bigBlindPlayerID} paid the big blind.`);
         ctx.events.endTurn();
         // Actual gameplay starts...
@@ -281,10 +284,9 @@ export const TexasHoldEm = {
       ...G,
       // Only allow player to see their own cards
       playerCards: G.playerCards.map((cards, index) => {
-        return playerID == index ? cards : ["", ""];
+        return parseInt(playerID) === index ? cards : ["", ""];
       }),
     };
-    console.log(filteredG);
     return filteredG;
   },
 
