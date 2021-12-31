@@ -1,19 +1,22 @@
 import React from "react";
 import PokerCard from "./PokerCard";
 import MoveButton from "./MoveButton";
+import { BIG_BLIND } from "../constants";
 
 export class TexasHoldEmBoard extends React.Component {
-  betHandler() {
-    this.props.moves.bet();
-  }
   checkHandler() {
-    this.props.moves.check();
+    this.props.moves.call();
   }
   callHandler() {
     this.props.moves.call();
   }
+  betHandler() {
+    // Arbitrary hard-coded value for now
+    this.props.moves.raise(10);
+  }
   raiseHandler() {
-    this.props.moves.raise();
+    // Arbitrary hard-coded value for now
+    this.props.moves.raise(10);
   }
   foldHandler() {
     this.props.moves.fold();
@@ -57,10 +60,14 @@ export class TexasHoldEmBoard extends React.Component {
             id="game-log"
             className="flex-1 h-48 px-4 py-3 rounded-lg shadow-inner bg-poker-soft-white text-poker-black space-y-3 overflow-y-scroll"
           >
-            <div className="game-log-item">
-              <span className="font-semibold">[Sys]</span> Waiting for game to
-              start...
-            </div>
+            {this.props.G.gameLogs
+              .map((log, i) => (
+                <div className="game-log-item">
+                  <span className="font-semibold">[Sys] </span>
+                  <span key={i}>{log}</span>
+                </div>
+              ))
+              .reduce((prev, curr) => [prev, curr])}
           </div>
           <div
             id="stats"

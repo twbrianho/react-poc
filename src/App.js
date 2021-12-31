@@ -7,7 +7,7 @@ import { TexasHoldEmBoard } from "./components/Board";
 
 const TexasHoldEmClient = Client({
   game: TexasHoldEm,
-  numPlayers: 2,
+  numPlayers: 3,
   board: TexasHoldEmBoard,
   multiplayer: Local(),
 });
@@ -16,6 +16,7 @@ const App = () => (
   <div>
     <TexasHoldEmClient playerID="0" />
     <TexasHoldEmClient playerID="1" />
+    <TexasHoldEmClient playerID="2" />
   </div>
 );
 

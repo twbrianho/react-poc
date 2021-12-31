@@ -96,8 +96,8 @@ const resetGame = (G, ctx) => {
 export const TexasHoldEm = {
   name: "texas-hold-em",
   setup: (ctx) => {
-    console.log("Setting up new game...");
     return {
+      gameLogs: ["Setting up new game..."],
       deck: initDeck(), // An array of all 52 cards, created and shuffled in initDeck().
       flopCards: ["", "", ""], // 3 cards on the flop.
       turnCard: "", // 1 card on the turn.
@@ -141,21 +141,21 @@ export const TexasHoldEm = {
           G.playerCards[i] = G.deck.splice(0, 2);
         }
         G.dealerID = getNthNextActivePlayerID(G, ctx, ctx.currentPlayer, -3);
-        console.log(`Player ${G.dealerID} finished dealing.`);
+        G.gameLogs.push(`Player ${G.dealerID} finished dealing.`);
         // Player after dealer pays small blind.
         G.smallBlindPlayerID = getNthNextActivePlayerID(G, ctx, G.dealerID);
         G.playerStakes[G.smallBlindPlayerID] += SMALL_BLIND;
         G.playerChips[G.smallBlindPlayerID] -= SMALL_BLIND;
-        console.log(`Player ${G.smallBlindPlayerID} paid the small blind.`);
+        G.gameLogs.push(`Player ${G.smallBlindPlayerID} paid the small blind.`);
         // Player after small blind pays big blind.
         G.bigBlindPlayerID = getNthNextActivePlayerID(G, ctx, G.dealerID, 2);
         G.playerStakes[G.bigBlindPlayerID] += BIG_BLIND;
         G.playerChips[G.bigBlindPlayerID] -= BIG_BLIND;
         G.currentStake = BIG_BLIND;
-        console.log(`Player ${G.bigBlindPlayerID} paid the big blind.`);
+        G.gameLogs.push(`Player ${G.bigBlindPlayerID} paid the big blind.`);
         ctx.events.endTurn();
         // Actual gameplay starts...
-        console.log(`It is Player ${ctx.currentPlayer}'s turn...`);
+        G.gameLogs.push(`It is Player ${ctx.currentPlayer}'s turn...`);
       },
       moves: {
         raise,
@@ -224,7 +224,7 @@ export const TexasHoldEm = {
     }
     if (activePlayers.length === 1) {
       const winnerID = activePlayers[0];
-      console.log(`Player ${winnerID} won the game!`);
+      G.gameLogs.push(`Player ${winnerID} won the game!`);
       // TODO: Distribute chips to winner.
       return true;
     }
@@ -237,14 +237,13 @@ export const TexasHoldEm = {
       }
     }
     if (allInPlayers === activePlayers) {
-      console.log(`All players went all-in!`);
+      G.gameLogs.push(`All players went all-in!`);
       resolveGame(G, ctx);
       return true;
     }
   },
 
   playerView: (G, ctx, playerID) => {
-    console.log(`Player ${playerID} is viewing the game.`);
     const filteredG = {
       ...G,
       // Only allow player to see their own cards
