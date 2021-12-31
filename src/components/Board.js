@@ -24,6 +24,11 @@ export class TexasHoldEmBoard extends React.Component {
     return (
       <div className="">
         <div className="m-10 space-y-5">
+          <div className="text-center text-poker-white text-4xl font-semibold tracking-wider">
+            Pot: ${this.props.G.playerStakes.reduce((a, b) => a + b)}
+          </div>
+        </div>
+        <div className="m-10 space-y-5">
           <div className="text-center text-poker-white text-2xl font-semibold tracking-wider">
             Community Cards:
           </div>
