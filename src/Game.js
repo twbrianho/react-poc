@@ -1,69 +1,46 @@
 import { INVALID_MOVE } from "boardgame.io/core";
-import { PLAYER_STATE, PLAYER_MOVE } from "./poker/constants.js";
+import { PLAYER_STATE, PLAYER_MOVE, GAME_PHASE } from "./poker/constants.js";
 import { initDeck } from "./poker/deck-of-cards.js";
 import { getWinningPlayersIDsAndHands } from "./poker/showdown.js";
 import { getNthNextActivePlayerID } from "./utils/players.js";
 import { STARTING_CHIPS, SMALL_BLIND, BIG_BLIND } from "./constants.js";
 
 // MOVES
-const bet = (G, ctx, amount) => {
-  // TODO: Consider consolidating this into raise(), and only show differently on GUI.
-  // Only usable in PRE-FLOP(PRE-BET)
-  if (!G.preBet) {
-    console.log("Invalid move: a bet has already been made.");
-    return INVALID_MOVE;
-  }
-  // The bet has to be at least the current stake (which should be the big blind).
-  if (amount < G.currentStake) {
-    console.log(
-      "Invalid move: the bet amount should be larger than the big blind."
-    );
-    return INVALID_MOVE;
-  }
-  G.playerChips[ctx.currentPlayer] -= amount;
-  G.playerStakes[ctx.currentPlayer] += amount;
-  G.currentStake = amount;
-  // When the previous player's turn ends, the phase is over.
-  // Note that phaseEndsAt can still change if someone raises again.
-  G.phaseEndsAt = getNthNextActivePlayerID(G, ctx, ctx.currentPlayer, -1);
-  G.playerLastMoves[ctx.currentPlayer] = PLAYER_MOVE.BET;
-  G.preBet = false;
-};
 const raise = (G, ctx, raiseAmount) => {
   /*
   Match the current stake, and add raiseAmount on top of that.
   The betting ends when it's about to be this player's turn again.
+  This encapsulates both "Bet" and "Raise".
   */
+  if (G.currentStake === BIG_BLIND && ctx.phase === GAME_PHASE.PREFLOP) {
+    G.playerLastMoves[ctx.currentPlayer] = PLAYER_MOVE.BET;
+  } else {
+    G.playerLastMoves[ctx.currentPlayer] = PLAYER_MOVE.RAISE;
+  }
+  // Up the current stake, then make the player match the current stake.
   G.currentStake += raiseAmount;
   const playerStake = G.playerStakes[ctx.currentPlayer];
-  const betAmount = G.currentStake - playerStake + raiseAmount;
+  const betAmount = G.currentStake - playerStake;
   G.playerStakes[ctx.currentPlayer] += betAmount;
   G.playerChips[ctx.currentPlayer] -= betAmount;
   // When the previous player's turn ends, the phase is over.
   // Note that phaseEndsAt can still change if someone raises again.
   G.phaseEndsAt = getNthNextActivePlayerID(G, ctx, ctx.currentPlayer, -1);
-  G.playerLastMoves[ctx.currentPlayer] = PLAYER_MOVE.RAISE;
-  G.preRaise = false;
 };
 const call = (G, ctx) => {
   /*
-  Match the current stake.
+  Match the current stake and stay in the game.
+  This encapsulates both "Check" and "Call".
   */
   const playerStake = G.playerStakes[ctx.currentPlayer];
-  const betAmount = G.currentStake - playerStake;
-  G.playerStakes[ctx.currentPlayer] += betAmount;
-  G.playerChips[ctx.currentPlayer] -= betAmount;
-};
-const check = (G, ctx) => {
-  // Only usable in FLOP(PRE-RAISE), TURN(PRE-RAISE), and RIVER(PRE-RAISE).
-  if (!G.preBet) {
-    return INVALID_MOVE;
+  const amountToMatch = G.currentStake - playerStake;
+  G.playerStakes[ctx.currentPlayer] += amountToMatch;
+  G.playerChips[ctx.currentPlayer] -= amountToMatch;
+  if (amountToMatch === 0) {
+    G.playerLastMoves[ctx.currentPlayer] = PLAYER_MOVE.CHECK;
+  } else {
+    G.playerLastMoves[ctx.currentPlayer] = PLAYER_MOVE.CALL;
   }
-  // If player is not matching the current stake, then they can't check.
-  if (G.playerStakes[ctx.currentPlayer] !== G.currentStake) {
-    return INVALID_MOVE;
-  }
-  G.playerLastMoves[ctx.currentPlayer] = PLAYER_MOVE.CHECK;
 };
 const fold = (G, ctx) => {
   /*
@@ -159,8 +136,6 @@ export const TexasHoldEm = {
     PREFLOP: {
       start: true,
       onBegin: (G, ctx) => {
-        // Keep track of whether a bet has been made.
-        G.preBet = true;
         // Deal cards to players.
         for (let i = 0; i < ctx.numPlayers; i++) {
           G.playerCards[i] = G.deck.splice(0, 2);
@@ -183,59 +158,49 @@ export const TexasHoldEm = {
         console.log(`It is Player ${ctx.currentPlayer}'s turn...`);
       },
       moves: {
-        bet,
         raise,
         call,
         fold,
       },
-      next: "FLOP",
+      next: GAME_PHASE.FLOP,
     },
     FLOP: {
       onBegin: (G, ctx) => {
-        // Keep track of whether a raise has been made.
-        G.preRaise = true;
         // Deal 3 cards to the table.
         G.flopCards = G.deck.splice(0, 3);
       },
       moves: {
-        check,
         raise,
         call,
         fold,
       },
-      next: "TURN",
+      next: GAME_PHASE.TURN,
     },
     TURN: {
       onBegin: (G, ctx) => {
-        // Keep track of whether a raise has been made.
-        G.preRaise = true;
         // Deal 1 card to the table.
         G.turnCard = G.deck.pop();
       },
       moves: {
-        check,
         raise,
         call,
         fold,
       },
-      next: "RIVER",
+      next: GAME_PHASE.RIVER,
     },
     RIVER: {
       onBegin: (G, ctx) => {
-        // Keep track of whether a raise has been made.
-        G.preRaise = true;
         // Deal 1 card to the table.
         G.riverCard = G.deck.pop();
       },
       moves: {
-        check,
         raise,
         call,
         fold,
       },
-      next: "POSTGAME",
+      next: GAME_PHASE.SHOWDOWN,
     },
-    POSTGAME: {
+    SHOWDOWN: {
       // Calculate and display results. Wait before starting a new game.
       onBegin: (G, ctx) => {
         resolveGame(G, ctx);
@@ -286,6 +251,8 @@ export const TexasHoldEm = {
       playerCards: G.playerCards.map((cards, index) => {
         return parseInt(playerID) === index ? cards : ["", ""];
       }),
+      // Obviously, we also need to hide the deck
+      deck: [],
     };
     return filteredG;
   },

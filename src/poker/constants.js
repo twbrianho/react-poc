@@ -33,11 +33,11 @@ export const SUIT_TO_DISPLAY_MAP = new Map([
 
 // GAME PHASES
 export const GAME_PHASE = {
-  BETTING: "BET",
-  FLOP: "FLP",
-  TURN: "TRN",
-  RIVER: "RVR",
-  SHOWDOWN: "SHW",
+  PREFLOP: "PREFLOP",
+  FLOP: "FLOP",
+  TURN: "TURN",
+  RIVER: "RIVER",
+  SHOWDOWN: "SHOWDOWN",
 };
 export const GAME_PHASE_TO_DISPLAY_MAP = new Map([
   [GAME_PHASE.BETTING, "Betting"],
