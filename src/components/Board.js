@@ -2,6 +2,7 @@ import React from "react";
 import PokerCard from "./PokerCard";
 import MoveButton from "./MoveButton";
 import { BIG_BLIND } from "../constants";
+import { GAME_PHASE } from "../poker/constants";
 
 export class TexasHoldEmBoard extends React.Component {
   checkHandler() {
@@ -11,12 +12,24 @@ export class TexasHoldEmBoard extends React.Component {
     this.props.moves.call();
   }
   betHandler() {
-    // Arbitrary hard-coded value for now
-    this.props.moves.raise(10);
+    if (
+      this.props.ctx.phase === GAME_PHASE.PREFLOP ||
+      this.props.ctx.phase === GAME_PHASE.FLOP
+    ) {
+      this.props.moves.raise(BIG_BLIND);
+    } else {
+      this.props.moves.raise(2 * BIG_BLIND);
+    }
   }
   raiseHandler() {
-    // Arbitrary hard-coded value for now
-    this.props.moves.raise(10);
+    if (
+      this.props.ctx.phase === GAME_PHASE.PREFLOP ||
+      this.props.ctx.phase === GAME_PHASE.FLOP
+    ) {
+      this.props.moves.raise(BIG_BLIND);
+    } else {
+      this.props.moves.raise(2 * BIG_BLIND);
+    }
   }
   foldHandler() {
     this.props.moves.fold();

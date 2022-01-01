@@ -51,6 +51,8 @@ export const GAME_PHASE_TO_DISPLAY_MAP = new Map([
 // Note: Not sure how this will be used yet, but I have a feeling it will be handy.
 export const PLAYER_MOVE = {
   NONE: "NONE",
+  SMALL_BLIND: "SMALL_BLIND",
+  BIG_BLIND: "BIG_BLIND",
   BET: "BET",
   RAISE: "RAISE",
   CALL: "CALL",
