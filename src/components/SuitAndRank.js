@@ -14,7 +14,7 @@ const SuitAndRank = (props) => {
     ? "text-poker-red"
     : "text-poker-black";
   const font = "font-poker";
-  const pos = "flex flex-col justify-center pb-2";
+  const pos = "flex flex-col justify-center pb-3";
   const classes = [color, font, pos, props.className].join(" ");
 
   const suit = SUIT_TO_DISPLAY_MAP.get(suit_str);

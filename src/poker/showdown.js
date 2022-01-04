@@ -1,44 +1,49 @@
 import { NO_CONTEST, PLAYER_STATE } from "./constants";
 import { getHandAndScore } from "./hand-evaluator.js";
 
-export function getWinningPlayersIDsAndHands(G, ctx) {
+export function getWinningPlayersPosAndHands(G, ctx) {
   /*
-  Returns the winning players' IDs and hands in an array. For example:
+  Returns the winning players' positions and hands in an array. (This is an array because there may be tied winners.)
+  
+  For example:
   [
-    {id: 2, hand: ["2H", "3H", "4H", "5H", "6H"]}, 
-    {id: 4, hand: ["2D", "3D", "4D", "5D", "6D"]}
+    {pos: 2, hand: ["2H", "3H", "4H", "5H", "6H"]}, 
+    {pos: 4, hand: ["2D", "3D", "4D", "5D", "6D"]}
   ]
   */
   const playersHighestHandAndScore = [];
-  for (let playerID = 0; playerID < ctx.numPlayers; playerID++) {
-    if (G.playerStates[playerID] === PLAYER_STATE.IN) {
+  for (let playerPos = 0; playerPos < ctx.numPlayers; playerPos++) {
+    if (G.playerStates[playerPos] === PLAYER_STATE.IN) {
       // For each active player, get all combinations of hands from the 7 cards, and record their highest hand and score.
-      const cards = [...G.playerCards[playerID], ...G.communityCards];
+      const cards = [...G.playerCards[playerPos], ...G.communityCards];
       let hands = kCombinations(cards, 5);
       playersHighestHandAndScore.push(findHighestHandAndScore(hands));
     } else {
       // Players that have folded or are already out of the game don't get a score.
-      playersHighestHandAndScore.push({ hand: NO_CONTEST, score: 0 });
-    }
-  }
-
-  let maxScore = Math.max.apply(
-    null,
-    playersHighestHandAndScore.map(function (handAndScore) {
-      return handAndScore.score;
-    })
-  );
-
-  let winnersIDsAndHands = [];
-  for (let i = 0; i < playersHighestHandAndScore.length; i++) {
-    if (playersHighestHandAndScore[i].score === maxScore) {
-      winnersIDsAndHands.push({
-        id: i,
-        hand: playersHighestHandAndScore[i].hand,
+      playersHighestHandAndScore.push({
+        highest_hand: NO_CONTEST,
+        highest_score: 0,
       });
     }
   }
-  return winnersIDsAndHands;
+
+  // Find the highest score and return the corresponding player(s) + their hands.
+  let winnersPosAndHands = [];
+  let currHighestScore = 0;
+  for (let i = 0; i < playersHighestHandAndScore.length; i++) {
+    let currPlayerHand = playersHighestHandAndScore[i].hand;
+    let currPlayerScore = playersHighestHandAndScore[i].score;
+    if (currPlayerScore === currHighestScore) {
+      winnersPosAndHands.push({
+        pos: i,
+        hand: currPlayerHand,
+      });
+    } else if (currPlayerScore > currHighestScore) {
+      winnersPosAndHands = [{ pos: i, hand: currPlayerHand }];
+      currHighestScore = currPlayerScore;
+    }
+  }
+  return winnersPosAndHands;
 }
 
 function findHighestHandAndScore(hands) {
@@ -47,12 +52,12 @@ function findHighestHandAndScore(hands) {
   
   hands: an array of 5-card hands, for example [["2H", "3H", "4H", "5H", "6H"], ["3H", "4H", "5H", "6H", "7H"], ...]
   */
-  let ranks_and_scores = hands.map((hand) => getHandAndScore(hand));
-  let highest_score = Math.max(...ranks_and_scores.map((hand) => hand.score));
-  let highest_hand = ranks_and_scores.find(
-    (hand) => hand.score === highest_score
+  let handsAndScores = hands.map((hand) => getHandAndScore(hand));
+  let highestScore = Math.max(...handsAndScores.map((hand) => hand.score));
+  let highestHandAndScore = handsAndScores.find(
+    (hand) => hand.score === highestScore
   );
-  return { highest_hand, highest_score };
+  return highestHandAndScore;
 }
 
 function kCombinations(set, k) {

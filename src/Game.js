@@ -1,7 +1,11 @@
-import { INVALID_MOVE } from "boardgame.io/core";
-import { PLAYER_STATE, PLAYER_MOVE, GAME_PHASE } from "./poker/constants.js";
+import {
+  PLAYER_STATE,
+  PLAYER_MOVE,
+  GAME_PHASE,
+  HAND_TO_DISPLAY_MAP,
+} from "./poker/constants.js";
 import { initDeck } from "./poker/deck-of-cards.js";
-import { getWinningPlayersIDsAndHands } from "./poker/showdown.js";
+import { getWinningPlayersPosAndHands } from "./poker/showdown.js";
 import { getNthNextActivePlayerPos } from "./utils/players.js";
 import { STARTING_CHIPS, SMALL_BLIND, BIG_BLIND } from "./constants.js";
 
@@ -60,37 +64,37 @@ const fold = (G, ctx) => {
 
 // GAME RESOLUTION
 const resolveGame = (G, ctx) => {
-  // If any community cards haven't been dealt yet, deal now.
-  if (G.flopCards === ["", "", ""]) {
-    G.flopCards = G.deck.splice(0, 3);
-  }
-  if (G.turnCard === "") {
-    G.turnCard = G.deck.pop();
-  }
-  if (G.riverCard === "") {
-    G.riverCard = G.deck.pop();
-  }
   // Determine the winner(s) of the game.
-  const winnersIDsAndHands = getWinningPlayersIDsAndHands(G, ctx);
+  const winnersPosAndHands = getWinningPlayersPosAndHands(G, ctx);
+  G.gameLogs.push(
+    "Winner(s): " +
+      winnersPosAndHands
+        .map(
+          (winner) =>
+            `Player ${winner.pos} (${HAND_TO_DISPLAY_MAP.get(winner.hand)})`
+        )
+        .join(", ")
+  );
   // Pay out the stakes to the winner(s).
-  for (const [playerIDAndHand] of winnersIDsAndHands) {
-    G.playerChips[playerIDAndHand.id] += Math.floor(
-      G.currentStake / winnersIDsAndHands.length
-    );
-  }
+  const totalPot = G.playerStakes.reduce((a, b) => a + b);
+  winnersPosAndHands.map(
+    (winner) =>
+      (G.playerChips[winner.pos] += Math.floor(
+        totalPot / winnersPosAndHands.length
+      ))
+  );
   // Temporary solution to undividable pots: give the remainder to the first winner.
-  if (winnersIDsAndHands.length > 1) {
-    G.playerChips[winnersIDsAndHands[0].id] +=
-      G.currentStake % winnersIDsAndHands.length;
+  if (winnersPosAndHands.length > 1) {
+    G.playerChips[winnersPosAndHands[0].pos] +=
+      G.currentStake % winnersPosAndHands.length;
   }
-  return winnersIDsAndHands;
+  G.gameLogs.push(`$${totalPot} paid to winner(s).`);
+  return winnersPosAndHands;
 };
 const resetGame = (G, ctx) => {
   // Reset the game state.
   G.deck = initDeck();
-  G.flopCards = ["", "", ""];
-  G.turnCard = "";
-  G.riverCard = "";
+  G.communityCards = [];
   // Reset players that have folded, but not players that are out.
   G.playerStates = G.playerStates.map((state) =>
     state === PLAYER_STATE.FOLDED ? PLAYER_STATE.IN : state
@@ -107,9 +111,7 @@ export const TexasHoldEm = {
     return {
       gameLogs: ["Setting up new game..."],
       deck: initDeck(), // An array of all 52 cards, created and shuffled in initDeck().
-      flopCards: ["", "", ""], // 3 cards on the flop.
-      turnCard: "", // 1 card on the turn.
-      riverCard: "", // 1 card on the river.
+      communityCards: [], // None are dealt yet, but eventually includes 3 cards for Flop, 1 for Turn, 1 for River.
       playerStates: Array(ctx.numPlayers).fill(PLAYER_STATE.IN), // Current state of each player.
       playerLastMoves: Array(ctx.numPlayers).fill(PLAYER_MOVE.NONE), // Last move made by each player.
       playerCards: Array(ctx.numPlayers).fill([]), // 2D array, representing each player's cards, e.g. [["2H", "3H"], ["2D", "3D"]].
@@ -200,12 +202,13 @@ export const TexasHoldEm = {
     FLOP: {
       onBegin: (G, ctx) => {
         // Deal 3 cards to the table.
-        G.flopCards = G.deck.splice(0, 3);
+        const flopCards = G.deck.splice(0, 3);
+        G.communityCards.push(...flopCards);
         // The turn has been passed to the first player, who should be the player after the dealer.
         // When their previous player's turn ends, the phase is over and the next phase begins.
         // Note that phaseEndsAfter will change whenever someone raises.
         G.phaseEndsAfter = getNthNextActivePlayerPos(G, ctx, 0, -1);
-        G.gameLogs.push(`Here comes the Flop: ${G.flopCards.join(", ")}`);
+        G.gameLogs.push(`Here comes the Flop: ${flopCards.join(", ")}`);
       },
       moves: {
         raise,
@@ -217,12 +220,13 @@ export const TexasHoldEm = {
     TURN: {
       onBegin: (G, ctx) => {
         // Deal 1 card to the table.
-        G.turnCard = G.deck.pop();
+        const turnCard = G.deck.pop();
+        G.communityCards.push(turnCard);
         // The turn has been passed to the first player, who should be the player after the dealer.
         // When their previous player's turn ends, the phase is over and the next phase begins.
         // Note that phaseEndsAfter will change whenever someone raises.
         G.phaseEndsAfter = getNthNextActivePlayerPos(G, ctx, 0, -1);
-        G.gameLogs.push(`Here comes the Turn: ${G.turnCard}`);
+        G.gameLogs.push(`Here comes the Turn: ${turnCard}`);
       },
       moves: {
         raise,
@@ -234,12 +238,13 @@ export const TexasHoldEm = {
     RIVER: {
       onBegin: (G, ctx) => {
         // Deal 1 card to the table.
-        G.riverCard = G.deck.pop();
+        const riverCard = G.deck.pop();
+        G.communityCards.push(riverCard);
         // The turn has been passed to the first player, who should be the player after the dealer.
         // When their previous player's turn ends, the phase is over and the next phase begins.
         // Note that phaseEndsAfter will change whenever someone raises.
         G.phaseEndsAfter = getNthNextActivePlayerPos(G, ctx, 0, -1);
-        G.gameLogs.push(`Here comes the River: ${G.riverCard}`);
+        G.gameLogs.push(`Here comes the River: ${riverCard}`);
       },
       moves: {
         raise,

@@ -4,6 +4,7 @@ const PokerCard = (props) => {
   if (!props.card_str) {
     return (
       <div className="poker-card">
+        {/* Card back */}
         <div className="poker-card bg-card-back border-4 border-poker-white"></div>
       </div>
     );

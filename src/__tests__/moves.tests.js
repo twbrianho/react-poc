@@ -19,9 +19,7 @@ it("Game setup", () => {
   expect(ctx.phase).toEqual("PREFLOP");
 
   expect(G.deck.length).toEqual(46);
-  expect(G.flopCards).toEqual(["", "", ""]);
-  expect(G.turnCard).toEqual("");
-  expect(G.riverCard).toEqual("");
+  expect(G.communityCards).toEqual([]);
   expect(G.playerCards[0].length).toEqual(2);
   expect(G.playerCards[1].length).toEqual(2);
   expect(G.playerCards[2].length).toEqual(2);

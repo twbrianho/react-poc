@@ -25,12 +25,7 @@ it("Everyone calls", () => {
   expect(ctx.phase).toEqual("FLOP");
 
   expect(G.deck.length).toEqual(43);
-  expect(G.flopCards.length).toEqual(3);
-  expect(G.flopCards[0]).toBeTruthy();
-  expect(G.flopCards[1]).toBeTruthy();
-  expect(G.flopCards[2]).toBeTruthy();
-  expect(G.turnCard).toEqual("");
-  expect(G.riverCard).toEqual("");
+  expect(G.communityCards.length).toEqual(3);
   expect(G.playerCards[0].length).toEqual(2);
   expect(G.playerCards[1].length).toEqual(2);
   expect(G.playerCards[2].length).toEqual(2);

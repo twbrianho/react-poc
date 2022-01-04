@@ -15,8 +15,8 @@ const TexasHoldEmClient = Client({
 const App = () => (
   <div>
     <TexasHoldEmClient playerID="0" />
-    <TexasHoldEmClient playerID="1" />
-    <TexasHoldEmClient playerID="2" />
+    {/* <TexasHoldEmClient playerID="1" />
+    <TexasHoldEmClient playerID="2" /> */}
   </div>
 );
 
