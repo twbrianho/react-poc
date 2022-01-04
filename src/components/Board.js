@@ -1,9 +1,11 @@
 import React from "react";
-import PokerCard from "./PokerCard";
-import MoveButton from "./MoveButton";
-import { BIG_BLIND } from "../constants";
-import { GAME_PHASE } from "../poker/constants";
-import GameLogItem from "./GameLogItem";
+
+import PokerCard from "./PokerCard.js";
+import MoveButton from "./MoveButton.js";
+import GameLogs from "./GameLogs.js";
+
+import { BIG_BLIND } from "../constants.js";
+import { GAME_PHASE } from "../poker/constants.js";
 
 export class TexasHoldEmBoard extends React.Component {
   checkHandler() {
@@ -42,7 +44,7 @@ export class TexasHoldEmBoard extends React.Component {
       <div>
         <div
           id="table"
-          className="border-8 border-poker-white bg-green-700 shadow-lg rounded-full w-7/8 h-96 mx-20 my-10 p-5 space-y-5"
+          className="border-8 border-poker-white bg-green-700 shadow-lg rounded-full w-7/8 max-w-3xl h-96 mx-auto my-10 p-5 space-y-5"
         >
           <div className="m-10">
             <div
@@ -93,14 +95,7 @@ export class TexasHoldEmBoard extends React.Component {
           ))}
         </div>
         <div className="relative mx-20 my-10 px-4 py-3 bg-wavy rounded-xl shadow-xl flex justify-ends items-center space-x-5">
-          <div
-            id="game-log"
-            className="flex-1 h-48 px-4 py-3 rounded-lg shadow-inner bg-poker-soft-white text-poker-black space-y-3 overflow-y-scroll"
-          >
-            {this.props.G.gameLogs.map((log, i) => (
-              <GameLogItem key={i} log={log}></GameLogItem>
-            ))}
-          </div>
+          <GameLogs gameLogs={this.props.G.gameLogs}></GameLogs>
           <div
             id="stats"
             className="h-48 w-64 px-4 py-3 text-lg tracking-wider text-poker-soft-white overflow-scroll flex flex-col justify-between"
