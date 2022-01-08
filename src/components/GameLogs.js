@@ -22,7 +22,7 @@ const GameLogs = (props) => {
   return (
     <div
       id="game-log"
-      className="flex-1 h-48 px-4 py-3 rounded-lg shadow-inner bg-poker-soft-white text-poker-black overflow-y-scroll"
+      className="flex-1 max-w-2xl h-48 px-4 py-3 rounded-lg shadow-inner bg-poker-soft-white text-poker-black overflow-y-scroll"
     >
       <div className="space-y-3 border-l-2 pl-3 border-poker-black">
         {props.gameLogs.map((log, i) => (

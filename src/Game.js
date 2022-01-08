@@ -33,7 +33,7 @@ const raise = (G, ctx, raiseAmount) => {
   // Note that phaseEndsAfter can still change if someone raises again.
   G.phaseEndsAfter = getNthNextActivePlayerPos(G, ctx, ctx.playOrderPos, -1);
   G.gameLogs.push(
-    `Player ${ctx.currentPlayer} raises $${raiseAmount}, bringing the stake to $${G.currentStake}`
+    `${ctx.currentPlayer} raises $${raiseAmount}, bringing the stake to $${G.currentStake}`
   );
 };
 const call = (G, ctx) => {
@@ -47,10 +47,10 @@ const call = (G, ctx) => {
   G.playerChips[ctx.playOrderPos] -= amountToMatch;
   if (amountToMatch === 0) {
     G.playerLastMoves[ctx.playOrderPos] = PLAYER_MOVE.CHECK;
-    G.gameLogs.push(`Player ${ctx.currentPlayer} checks.`);
+    G.gameLogs.push(`${ctx.currentPlayer} checks.`);
   } else {
     G.playerLastMoves[ctx.playOrderPos] = PLAYER_MOVE.CALL;
-    G.gameLogs.push(`Player ${ctx.currentPlayer} calls.`);
+    G.gameLogs.push(`${ctx.currentPlayer} calls.`);
   }
 };
 const fold = (G, ctx) => {
@@ -59,7 +59,7 @@ const fold = (G, ctx) => {
   */
   G.playerLastMoves[ctx.playOrderPos] = PLAYER_MOVE.FOLD;
   G.playerStates[ctx.playOrderPos] = PLAYER_STATE.OUT;
-  G.gameLogs.push(`Player ${ctx.currentPlayer} folds.`);
+  G.gameLogs.push(`${ctx.currentPlayer} folds.`);
 };
 
 // GAME RESOLUTION
@@ -70,8 +70,7 @@ const resolveGame = (G, ctx) => {
     "Winner(s): " +
       winnersPosAndHands
         .map(
-          (winner) =>
-            `Player ${winner.pos} (${HAND_TO_DISPLAY_MAP.get(winner.hand)})`
+          (winner) => `${winner.pos} (${HAND_TO_DISPLAY_MAP.get(winner.hand)})`
         )
         .join(", ")
   );
@@ -128,17 +127,25 @@ export const TexasHoldEm = {
     order: {
       // Get the initial value of playOrderPos.
       // This is called at the beginning of the phase.
-      first: (G, ctx) => 0,
+      first: (G, ctx) => {
+        if (ctx.phase === GAME_PHASE.PREFLOP) {
+          // Pre-flop starts with the player after Big Blind, which is 2 players after the Small Blind.
+          // We designate the Small Blind as the first player (index 0), since that makes subsquent phases naturally start with them.
+          return getNthNextActivePlayerPos(G, ctx, 0, 2);
+        } else {
+          return 0;
+        }
+      },
       // Get the next value of playOrderPos.
       // This is called at the end of each turn.
       // The phase ends if this returns undefined.
       next: (G, ctx) => getNthNextActivePlayerPos(G, ctx, ctx.playOrderPos, 1),
     },
-    // NOTE: Cannot enforce minMoves because the small and big blinds do not count as moves.
+    minMoves: 1,
     maxMoves: 1,
     endIf: (G, ctx) => {
-      // If the current player has folded or is already out, then their turn is skipped
-      // Usually it shouldn't come to this, since getNthNextActivePlayerPos determines who goes next, and skips such players.
+      // If the current player has folded or is already out, then their turn is skipped.
+      // Usually it should never come to this, since getNthNextActivePlayerPos determines who goes next and skips such players.
       // TODO: Remove this once we have better testing to ensure it doesn't come to this.
       return (
         G.playerStates[ctx.playOrderPos] === PLAYER_STATE.OUT ||
@@ -146,33 +153,11 @@ export const TexasHoldEm = {
       );
     },
     onBegin: (G, ctx) => {
-      // Force the small blind and big blind.
-      if (ctx.phase === "PREFLOP" && G.currentStake === 0) {
-        // At the start of the game, the player after the dealer has to pay the small blind.
-        // This is effectively a forced move.
-        G.playerChips[ctx.playOrderPos] -= SMALL_BLIND;
-        G.playerStakes[ctx.playOrderPos] += SMALL_BLIND;
-        G.currentStake = SMALL_BLIND;
-        G.playerLastMoves[ctx.playOrderPos] = PLAYER_MOVE.SMALL_BLIND;
-        G.gameLogs.push(`Player ${ctx.currentPlayer} pays the small blind.`);
-        G.smallBlindPlayerPos = ctx.playOrderPos;
-        G.phaseEndsAfter = G.smallBlindPlayerPos;
-        ctx.events.endTurn();
-      } else if (ctx.phase === "PREFLOP" && G.currentStake === SMALL_BLIND) {
-        // At the start of the game, the player after the small blind has to pay the big blind.
-        // This is effectively a forced move.
-        G.playerChips[ctx.playOrderPos] -= BIG_BLIND;
-        G.playerStakes[ctx.playOrderPos] += BIG_BLIND;
-        G.currentStake = BIG_BLIND;
-        G.playerLastMoves[ctx.playOrderPos] = PLAYER_MOVE.BIG_BLIND;
-        G.gameLogs.push(`Player ${ctx.currentPlayer} pays the big blind.`);
-        G.bigBlindPlayerPos = ctx.playOrderPos;
-        G.phaseEndsAfter = G.bigBlindPlayerPos;
-        ctx.events.endTurn();
-      }
+      // TODO: Pre-turn checks.
     },
-    // onMove is called at the END of each move!
+    // onMove is called at the END of the turn, after the move has been made.
     onMove: (G, ctx) => {
+      // TODO: Make sure the player's stake matches the current stake, if they are still in the game.
       if (parseInt(ctx.playOrderPos) === G.phaseEndsAfter) {
         ctx.events.endPhase();
       }
@@ -187,10 +172,36 @@ export const TexasHoldEm = {
         for (let i = 0; i < ctx.numPlayers; i++) {
           G.playerCards[i] = G.deck.splice(0, 2);
         }
+
+        // TODO: Deal with the edge case where the 0th player is already out of the game
+
         // I want the player before player 0 to be the dealer — that way
         // each phase after this will start with player 0 naturally.
         G.dealerPos = getNthNextActivePlayerPos(G, ctx, ctx.playOrderPos, -1);
-        G.gameLogs.push(`Player ${ctx.playOrder[G.dealerPos]} is the dealer.`);
+        G.gameLogs.push(`${ctx.playOrder[G.dealerPos]} is the dealer.`);
+
+        // The player after the dealer has to pay the small blind.
+        G.smallBlindPlayerPos = 0;
+        G.playerChips[G.smallBlindPlayerPos] -= SMALL_BLIND;
+        G.playerStakes[G.smallBlindPlayerPos] += SMALL_BLIND;
+        G.currentStake = SMALL_BLIND;
+        G.playerLastMoves[G.smallBlindPlayerPos] = PLAYER_MOVE.SMALL_BLIND;
+        G.gameLogs.push(
+          `${ctx.playOrder[G.smallBlindPlayerPos]} pays the small blind.`
+        );
+        G.phaseEndsAfter = G.smallBlindPlayerPos;
+
+        // The player after the small blind has to pay the big blind.
+        G.bigBlindPlayerPos = getNthNextActivePlayerPos(G, ctx, 0, 1);
+        G.playerChips[G.bigBlindPlayerPos] -= BIG_BLIND;
+        G.playerStakes[G.bigBlindPlayerPos] += BIG_BLIND;
+        G.currentStake = BIG_BLIND;
+        G.playerLastMoves[G.bigBlindPlayerPos] = PLAYER_MOVE.BIG_BLIND;
+        G.gameLogs.push(
+          `${ctx.playOrder[G.bigBlindPlayerPos]} pays the big blind.`
+        );
+
+        G.phaseEndsAfter = G.bigBlindPlayerPos;
       },
       moves: {
         raise,
@@ -277,7 +288,7 @@ export const TexasHoldEm = {
     }
     if (activePlayers.length === 1) {
       const winnerID = activePlayers[0];
-      G.gameLogs.push(`Player ${ctx.playOrder[winnerID]} won the game!`);
+      G.gameLogs.push(`${ctx.playOrder[winnerID]} won the game!`);
       // TODO: Distribute chips to winner.
       return true;
     }
