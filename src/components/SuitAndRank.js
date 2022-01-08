@@ -21,8 +21,8 @@ const SuitAndRank = (props) => {
   const rank = RANK_TO_DISPLAY_MAP.get(parseInt(rank_str));
   return (
     <div className={classes}>
-      <div className="text-2xl">{rank}</div>
-      <div className="text-5xl">{suit}</div>
+      <div className="text-xl">{rank}</div>
+      <div className="text-3xl">{suit}</div>
     </div>
   );
 };

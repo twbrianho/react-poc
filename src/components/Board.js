@@ -1,82 +1,67 @@
 import React from "react";
 
-import MoveButton from "./MoveButton.js";
 import GameLogs from "./GameLogs.js";
 import PlayerBoardArea from "./PlayerBoardArea.js";
 
-import { BIG_BLIND } from "../constants.js";
-import { GAME_PHASE } from "../poker/constants.js";
 import TableArea from "./TableArea.js";
 import { getPotTotal } from "../utils/chips.js";
+import MoveSelection from "./MoveSelection.js";
 
 export class TexasHoldEmBoard extends React.Component {
-  callHandler() {
-    this.props.moves.call();
-  }
-  raiseHandler() {
-    if (
-      this.props.ctx.phase === GAME_PHASE.PREFLOP ||
-      this.props.ctx.phase === GAME_PHASE.FLOP
-    ) {
-      this.props.moves.raise(BIG_BLIND);
-    } else {
-      this.props.moves.raise(2 * BIG_BLIND);
-    }
-  }
-  foldHandler() {
-    this.props.moves.fold();
-  }
-
   render() {
-    const playerID = this.props.playerID;
+    const clientPlayerID = this.props.playerID;
+    const currentPlayerID = this.props.ctx.currentPlayer;
 
     const halfPlayers = Math.ceil(this.props.ctx.playOrder.length / 2);
+    const topHalfPlayers = this.props.ctx.playOrder.slice(0, halfPlayers);
+    // Reverse bottom order so that the turn order goes clockwise around the table.
+    const bottomHalfPlayers = this.props.ctx.playOrder
+      .slice(halfPlayers)
+      .reverse();
     return (
-      <div>
-        <div className="m-10 flex justify-center space-x-10">
-          {this.props.ctx.playOrder.map((playerID, index) => {
-            return (
-              <PlayerBoardArea
-                key={index}
-                playerID={playerID}
-                playerCards={this.props.G.players[playerID].cards}
-              ></PlayerBoardArea>
-            );
-          })}
+      <div className="flex justify-center space-x-10">
+        <div className="m-8">
+          <div className="flex justify-center items-center space-x-8">
+            {topHalfPlayers.map((playerID, index) => {
+              return (
+                <PlayerBoardArea
+                  key={index}
+                  isClient={playerID === clientPlayerID}
+                  isCurrentPlayer={playerID === currentPlayerID}
+                  playerID={playerID}
+                  playerCards={this.props.G.players[playerID].cards}
+                  playerStake={this.props.G.players[playerID].stake}
+                  playerChips={this.props.G.players[playerID].chips}
+                ></PlayerBoardArea>
+              );
+            })}
+          </div>
+          <TableArea
+            potTotal={getPotTotal(this.props.G)}
+            communityCards={this.props.G.communityCards}
+          ></TableArea>
+          <div className="flex justify-center space-x-8">
+            {bottomHalfPlayers.map((playerID, index) => {
+              return (
+                <PlayerBoardArea
+                  key={index}
+                  isClient={playerID === clientPlayerID}
+                  isCurrentPlayer={playerID === currentPlayerID}
+                  playerID={playerID}
+                  playerCards={this.props.G.players[playerID].cards}
+                  playerStake={this.props.G.players[playerID].stake}
+                  playerChips={this.props.G.players[playerID].chips}
+                ></PlayerBoardArea>
+              );
+            })}
+          </div>
         </div>
-        <TableArea
-          potTotal={getPotTotal(this.props.G)}
-          communityCards={this.props.G.communityCards}
-        ></TableArea>
-        <div className="relative max-w-5xl mx-auto my-10 px-4 py-3 bg-wavy rounded-xl shadow-xl flex justify-ends items-center space-x-5">
+        <div className="flex flex-col w-80 m-8 p-8 bg-poker-black rounded-xl shadow-xl space-y-5">
           <GameLogs gameLogs={this.props.G.gameLogs}></GameLogs>
-          <div
-            id="stats"
-            className="h-48 w-64 px-4 py-3 text-lg tracking-wider text-poker-soft-white overflow-scroll flex flex-col justify-between"
-          >
-            <div>Chips: ${this.props.G.players[playerID].chips}</div>
-            <div>Games Played: 0</div>
-            <div>Wins: 0</div>
-            <div>Folds: 0</div>
-            <div>Losses: 0</div>
-          </div>
-          <div id="moves" className="h-48 flex flex-col items-start">
-            <MoveButton d="M5 13l4 4L19 7" onClick={() => this.callHandler()}>
-              Call
-            </MoveButton>
-            <MoveButton
-              d="M5 11l7-7 7 7M5 19l7-7 7 7"
-              onClick={() => this.raiseHandler()}
-            >
-              Raise
-            </MoveButton>
-            <MoveButton
-              d="M6 18L18 6M6 6l12 12"
-              onClick={() => this.foldHandler()}
-            >
-              Fold
-            </MoveButton>
-          </div>
+          <MoveSelection
+            moves={this.props.moves}
+            ctx={this.props.ctx}
+          ></MoveSelection>
         </div>
       </div>
     );

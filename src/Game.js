@@ -140,7 +140,7 @@ export const TexasHoldEm = {
   },
 
   minPlayers: 2,
-  maxPlayers: 6,
+  maxPlayers: 8,
 
   turn: {
     order: {

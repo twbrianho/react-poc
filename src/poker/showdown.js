@@ -1,4 +1,4 @@
-import { NO_CONTEST, PLAYER_STATE } from "./constants";
+import { PLAYER_STATE } from "./constants";
 import { getHandAndScore } from "./hand-evaluator.js";
 
 export function getWinningPlayersIDsAndHands(G, ctx) {

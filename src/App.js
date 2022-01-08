@@ -7,7 +7,7 @@ import { TexasHoldEmBoard } from "./components/Board";
 
 const TexasHoldEmClient = Client({
   game: TexasHoldEm,
-  numPlayers: 3,
+  numPlayers: 8,
   board: TexasHoldEmBoard,
   multiplayer: Local(),
 });

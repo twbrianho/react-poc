@@ -4,17 +4,17 @@ const TableArea = (props) => {
   return (
     <div
       id="table"
-      className="border-8 border-poker-white bg-green-700 shadow-lg rounded-full w-7/8 max-w-3xl h-96 mx-auto my-10 p-5 space-y-5"
+      className="flex flex-col justify-start items-center border-8 border-green-800 bg-green-700 shadow-lg rounded-full w-144 h-72 mx-auto my-4 pt-10 space-y-8"
     >
-      <div className="m-10">
+      <div className="">
         <div
           id="pot"
-          className="text-center text-poker-white text-4xl font-semibold tracking-wider flex justify-center items-center"
+          className="text-center text-poker-white text-3xl font-semibold tracking-wider flex justify-center items-center"
         >
           {props.potTotal}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-10 w-10 ml-1"
+            className="h-8 w-8 ml-1"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -27,15 +27,13 @@ const TableArea = (props) => {
           </svg>
         </div>
       </div>
-      <div className="m-10">
-        <div
-          id="community-cards"
-          className="flex justify-center items-center space-x-5"
-        >
-          {props.communityCards.map((card, index) => (
-            <PokerCard key={index} card_str={card} />
-          ))}
-        </div>
+      <div
+        id="community-cards"
+        className="flex justify-center items-center space-x-5"
+      >
+        {props.communityCards.map((card, index) => (
+          <PokerCard key={index} card_str={card} />
+        ))}
       </div>
     </div>
   );
