@@ -30,7 +30,7 @@ export class TexasHoldEmBoard extends React.Component {
   render() {
     const playerID = this.props.playerID;
 
-    const halfPlayers = Math.ceil(this.props.playOrder.length / 2);
+    const halfPlayers = Math.ceil(this.props.ctx.playOrder.length / 2);
     return (
       <div>
         <div className="m-10 flex justify-center space-x-10">
