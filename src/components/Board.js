@@ -1,6 +1,5 @@
 import React from "react";
 
-import PokerCard from "./PokerCard.js";
 import MoveButton from "./MoveButton.js";
 import GameLogs from "./GameLogs.js";
 import PlayerBoardArea from "./PlayerBoardArea.js";
@@ -8,6 +7,7 @@ import PlayerBoardArea from "./PlayerBoardArea.js";
 import { BIG_BLIND } from "../constants.js";
 import { GAME_PHASE } from "../poker/constants.js";
 import TableArea from "./TableArea.js";
+import { getPotTotal } from "../utils/chips.js";
 
 export class TexasHoldEmBoard extends React.Component {
   callHandler() {
@@ -34,16 +34,18 @@ export class TexasHoldEmBoard extends React.Component {
     return (
       <div>
         <div className="m-10 flex justify-center space-x-10">
-          {this.props.G.playerCards.map((cards, index) => (
-            <PlayerBoardArea
-              key={index}
-              playerID={this.props.ctx.playOrder[index]}
-              playerCards={this.props.G.playerCards[index]}
-            ></PlayerBoardArea>
-          ))}
+          {this.props.ctx.playOrder.map((playerID, index) => {
+            return (
+              <PlayerBoardArea
+                key={index}
+                playerID={playerID}
+                playerCards={this.props.G.players[playerID].cards}
+              ></PlayerBoardArea>
+            );
+          })}
         </div>
         <TableArea
-          potTotal={this.props.G.playerStakes.reduce((a, b) => a + b)}
+          potTotal={getPotTotal(this.props.G)}
           communityCards={this.props.G.communityCards}
         ></TableArea>
         <div className="relative max-w-5xl mx-auto my-10 px-4 py-3 bg-wavy rounded-xl shadow-xl flex justify-ends items-center space-x-5">
@@ -52,7 +54,7 @@ export class TexasHoldEmBoard extends React.Component {
             id="stats"
             className="h-48 w-64 px-4 py-3 text-lg tracking-wider text-poker-soft-white overflow-scroll flex flex-col justify-between"
           >
-            <div>Chips: ${this.props.G.playerChips[playerID]}</div>
+            <div>Chips: ${this.props.G.players[playerID].chips}</div>
             <div>Games Played: 0</div>
             <div>Wins: 0</div>
             <div>Folds: 0</div>

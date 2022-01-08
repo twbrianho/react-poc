@@ -20,31 +20,26 @@ it("Game setup", () => {
 
   expect(G.deck.length).toEqual(46);
   expect(G.communityCards).toEqual([]);
-  expect(G.playerCards[0].length).toEqual(2);
-  expect(G.playerCards[1].length).toEqual(2);
-  expect(G.playerCards[2].length).toEqual(2);
+  expect(G.players["0"].cards.length).toEqual(2);
+  expect(G.players["1"].cards.length).toEqual(2);
+  expect(G.players["2"].cards.length).toEqual(2);
 
-  expect(G.playerStates).toEqual([
-    PLAYER_STATE.IN,
-    PLAYER_STATE.IN,
-    PLAYER_STATE.IN,
-  ]);
-  expect(G.playerLastMoves).toEqual([
-    PLAYER_MOVE.SMALL_BLIND,
-    PLAYER_MOVE.BIG_BLIND,
-    PLAYER_MOVE.NONE,
-  ]);
+  expect(G.players["0"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["1"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["2"].state).toEqual(PLAYER_STATE.IN);
 
-  expect(G.dealerPos).toEqual(2);
-  expect(G.smallBlindPlayerPos).toEqual(0);
-  expect(G.bigBlindPlayerPos).toEqual(1);
+  expect(G.players["0"].lastMove).toEqual(PLAYER_MOVE.SMALL_BLIND);
+  expect(G.players["1"].lastMove).toEqual(PLAYER_MOVE.BIG_BLIND);
+  expect(G.players["2"].lastMove).toEqual(PLAYER_MOVE.NONE);
 
-  expect(G.playerStakes).toEqual([SMALL_BLIND, BIG_BLIND, 0]);
-  expect(G.playerChips).toEqual([
-    STARTING_CHIPS - SMALL_BLIND,
-    STARTING_CHIPS - BIG_BLIND,
-    STARTING_CHIPS,
-  ]);
+  expect(G.players["0"].stake).toEqual(SMALL_BLIND);
+  expect(G.players["1"].stake).toEqual(BIG_BLIND);
+  expect(G.players["2"].stake).toEqual(0);
+
+  expect(G.players["0"].chips).toEqual(STARTING_CHIPS - SMALL_BLIND);
+  expect(G.players["1"].chips).toEqual(STARTING_CHIPS - BIG_BLIND);
+  expect(G.players["2"].chips).toEqual(STARTING_CHIPS);
+
   expect(G.currentStake).toEqual(10);
   expect(G.phaseEndsAfter).toEqual(1);
 });
@@ -62,11 +57,11 @@ it("Call (base case)", () => {
   // Verify new state
   const { G, ctx } = client.store.getState();
   const expectedStake = BIG_BLIND;
-  expect(G.playerStates[2]).toEqual(PLAYER_STATE.IN);
-  expect(G.playerLastMoves[2]).toEqual(PLAYER_MOVE.CALL);
   expect(ctx.playOrderPos).toEqual(0); // Turn has gone to next player
-  expect(G.playerStakes[2]).toEqual(expectedStake);
-  expect(G.playerChips[2]).toEqual(STARTING_CHIPS - expectedStake);
+  expect(G.players["2"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["2"].lastMove).toEqual(PLAYER_MOVE.CALL);
+  expect(G.players["2"].stake).toEqual(expectedStake);
+  expect(G.players["2"].chips).toEqual(STARTING_CHIPS - expectedStake);
   expect(G.currentStake).toEqual(expectedStake);
   expect(G.phaseEndsAfter).toEqual(1);
 });
@@ -84,11 +79,11 @@ it("Bet (base case)", () => {
   // Verify new state
   const { G, ctx } = client.store.getState();
   const expectedStake = BIG_BLIND + 20;
-  expect(G.playerStates[2]).toEqual(PLAYER_STATE.IN);
-  expect(G.playerLastMoves[2]).toEqual(PLAYER_MOVE.BET);
   expect(ctx.playOrderPos).toEqual(0); // Turn has gone to next player
-  expect(G.playerStakes[2]).toEqual(expectedStake);
-  expect(G.playerChips[2]).toEqual(STARTING_CHIPS - expectedStake);
+  expect(G.players["2"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["2"].lastMove).toEqual(PLAYER_MOVE.BET);
+  expect(G.players["2"].stake).toEqual(expectedStake);
+  expect(G.players["2"].chips).toEqual(STARTING_CHIPS - expectedStake);
   expect(G.currentStake).toEqual(expectedStake);
   expect(G.phaseEndsAfter).toEqual(1);
 });
@@ -107,11 +102,11 @@ it("Raise (base case)", () => {
   // Verify new state
   const { G, ctx } = client.store.getState();
   const expectedStake = BIG_BLIND + 10 + 20;
-  expect(G.playerStates[0]).toEqual(PLAYER_STATE.IN);
-  expect(G.playerLastMoves[0]).toEqual(PLAYER_MOVE.RAISE);
   expect(ctx.playOrderPos).toEqual(1); // Turn has gone to next player
-  expect(G.playerStakes[0]).toEqual(expectedStake);
-  expect(G.playerChips[0]).toEqual(STARTING_CHIPS - expectedStake);
+  expect(G.players["0"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["0"].lastMove).toEqual(PLAYER_MOVE.RAISE);
+  expect(G.players["0"].stake).toEqual(expectedStake);
+  expect(G.players["0"].chips).toEqual(STARTING_CHIPS - expectedStake);
   expect(G.currentStake).toEqual(expectedStake);
   expect(G.phaseEndsAfter).toEqual(2);
 });
@@ -128,11 +123,11 @@ it("Fold (base case)", () => {
 
   // Verify new state
   const { G, ctx } = client.store.getState();
-  expect(G.playerStates[2]).toEqual(PLAYER_STATE.OUT);
-  expect(G.playerLastMoves[2]).toEqual(PLAYER_MOVE.FOLD);
   expect(ctx.playOrderPos).toEqual(0); // Turn has gone to next player
-  expect(G.playerStakes[2]).toEqual(0);
-  expect(G.playerChips[2]).toEqual(STARTING_CHIPS);
+  expect(G.players["2"].state).toEqual(PLAYER_STATE.OUT);
+  expect(G.players["2"].lastMove).toEqual(PLAYER_MOVE.FOLD);
+  expect(G.players["2"].stake).toEqual(0);
+  expect(G.players["2"].chips).toEqual(STARTING_CHIPS);
   expect(G.currentStake).toEqual(BIG_BLIND);
   expect(G.phaseEndsAfter).toEqual(1);
 });

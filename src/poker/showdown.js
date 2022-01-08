@@ -1,49 +1,38 @@
 import { NO_CONTEST, PLAYER_STATE } from "./constants";
 import { getHandAndScore } from "./hand-evaluator.js";
 
-export function getWinningPlayersPosAndHands(G, ctx) {
+export function getWinningPlayersIDsAndHands(G, ctx) {
   /*
-  Returns the winning players' positions and hands in an array. (This is an array because there may be tied winners.)
-  
-  For example:
-  [
-    {pos: 2, hand: ["2H", "3H", "4H", "5H", "6H"]}, 
-    {pos: 4, hand: ["2D", "3D", "4D", "5D", "6D"]}
-  ]
+  Returns the winning players' IDs and hands in an array.
+  This is an array because there may be multiple tied winners.
   */
-  const playersHighestHandAndScore = [];
-  for (let playerPos = 0; playerPos < ctx.numPlayers; playerPos++) {
-    if (G.playerStates[playerPos] === PLAYER_STATE.IN) {
+  const playersHighestHandAndScore = {};
+  ctx.playOrder.forEach((playerID) => {
+    if (G.players[playerID].state === PLAYER_STATE.IN) {
       // For each active player, get all combinations of hands from the 7 cards, and record their highest hand and score.
-      const cards = [...G.playerCards[playerPos], ...G.communityCards];
+      const cards = [...G.players[playerID].cards, ...G.communityCards];
       let hands = kCombinations(cards, 5);
-      playersHighestHandAndScore.push(findHighestHandAndScore(hands));
-    } else {
-      // Players that have folded or are already out of the game don't get a score.
-      playersHighestHandAndScore.push({
-        highest_hand: NO_CONTEST,
-        highest_score: 0,
-      });
+      playersHighestHandAndScore[playerID] = findHighestHandAndScore(hands);
     }
-  }
+  });
 
-  // Find the highest score and return the corresponding player(s) + their hands.
-  let winnersPosAndHands = [];
+  // Find the highest score and return the corresponding players & their hands.
+  let winnersIDsAndHands = [];
   let currHighestScore = 0;
-  for (let i = 0; i < playersHighestHandAndScore.length; i++) {
-    let currPlayerHand = playersHighestHandAndScore[i].hand;
-    let currPlayerScore = playersHighestHandAndScore[i].score;
+  for (const playerID in playersHighestHandAndScore) {
+    let currPlayerHand = playersHighestHandAndScore[playerID].hand;
+    let currPlayerScore = playersHighestHandAndScore[playerID].score;
     if (currPlayerScore === currHighestScore) {
-      winnersPosAndHands.push({
-        pos: i,
+      winnersIDsAndHands.push({
+        id: playerID,
         hand: currPlayerHand,
       });
     } else if (currPlayerScore > currHighestScore) {
-      winnersPosAndHands = [{ pos: i, hand: currPlayerHand }];
+      winnersIDsAndHands = [{ id: playerID, hand: currPlayerHand }];
       currHighestScore = currPlayerScore;
     }
   }
-  return winnersPosAndHands;
+  return winnersIDsAndHands;
 }
 
 function findHighestHandAndScore(hands) {

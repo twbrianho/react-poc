@@ -26,31 +26,26 @@ it("Everyone calls", () => {
 
   expect(G.deck.length).toEqual(43);
   expect(G.communityCards.length).toEqual(3);
-  expect(G.playerCards[0].length).toEqual(2);
-  expect(G.playerCards[1].length).toEqual(2);
-  expect(G.playerCards[2].length).toEqual(2);
+  expect(G.players["0"].cards.length).toEqual(2);
+  expect(G.players["1"].cards.length).toEqual(2);
+  expect(G.players["2"].cards.length).toEqual(2);
 
-  expect(G.playerStates).toEqual([
-    PLAYER_STATE.IN,
-    PLAYER_STATE.IN,
-    PLAYER_STATE.IN,
-  ]);
-  expect(G.playerLastMoves).toEqual([
-    PLAYER_MOVE.CALL,
-    PLAYER_MOVE.CHECK,
-    PLAYER_MOVE.CALL,
-  ]);
+  expect(G.players["0"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["1"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["2"].state).toEqual(PLAYER_STATE.IN);
 
-  expect(G.dealerPos).toEqual(2);
-  expect(G.smallBlindPlayerPos).toEqual(0);
-  expect(G.bigBlindPlayerPos).toEqual(1);
+  expect(G.players["0"].lastMove).toEqual(PLAYER_MOVE.CALL);
+  expect(G.players["1"].lastMove).toEqual(PLAYER_MOVE.CHECK);
+  expect(G.players["2"].lastMove).toEqual(PLAYER_MOVE.CALL);
 
-  expect(G.playerStakes).toEqual([BIG_BLIND, BIG_BLIND, BIG_BLIND]);
-  expect(G.playerChips).toEqual([
-    STARTING_CHIPS - BIG_BLIND,
-    STARTING_CHIPS - BIG_BLIND,
-    STARTING_CHIPS - BIG_BLIND,
-  ]);
+  expect(G.players["0"].stake).toEqual(BIG_BLIND);
+  expect(G.players["1"].stake).toEqual(BIG_BLIND);
+  expect(G.players["2"].stake).toEqual(BIG_BLIND);
+
+  expect(G.players["0"].chips).toEqual(STARTING_CHIPS - BIG_BLIND);
+  expect(G.players["1"].chips).toEqual(STARTING_CHIPS - BIG_BLIND);
+  expect(G.players["2"].chips).toEqual(STARTING_CHIPS - BIG_BLIND);
+
   expect(G.currentStake).toEqual(10);
   expect(G.phaseEndsAfter).toEqual(2);
 });
@@ -74,23 +69,22 @@ it("Only first player raises", () => {
   expect(ctx.playOrderPos).toEqual(0);
   expect(ctx.phase).toEqual("FLOP");
 
-  expect(G.playerStates).toEqual([
-    PLAYER_STATE.IN,
-    PLAYER_STATE.IN,
-    PLAYER_STATE.IN,
-  ]);
-  expect(G.playerLastMoves).toEqual([
-    PLAYER_MOVE.CALL,
-    PLAYER_MOVE.CALL,
-    PLAYER_MOVE.BET,
-  ]);
+  expect(G.players["0"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["1"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["2"].state).toEqual(PLAYER_STATE.IN);
 
-  expect(G.playerStakes).toEqual([expectedStake, expectedStake, expectedStake]);
-  expect(G.playerChips).toEqual([
-    STARTING_CHIPS - expectedStake,
-    STARTING_CHIPS - expectedStake,
-    STARTING_CHIPS - expectedStake,
-  ]);
+  expect(G.players["0"].lastMove).toEqual(PLAYER_MOVE.CALL);
+  expect(G.players["1"].lastMove).toEqual(PLAYER_MOVE.CALL);
+  expect(G.players["2"].lastMove).toEqual(PLAYER_MOVE.BET);
+
+  expect(G.players["0"].stake).toEqual(expectedStake);
+  expect(G.players["1"].stake).toEqual(expectedStake);
+  expect(G.players["2"].stake).toEqual(expectedStake);
+
+  expect(G.players["0"].chips).toEqual(STARTING_CHIPS - expectedStake);
+  expect(G.players["1"].chips).toEqual(STARTING_CHIPS - expectedStake);
+  expect(G.players["2"].chips).toEqual(STARTING_CHIPS - expectedStake);
+
   expect(G.currentStake).toEqual(expectedStake);
   expect(G.phaseEndsAfter).toEqual(2);
 });
@@ -116,23 +110,22 @@ it("Last player raises", () => {
   expect(ctx.playOrderPos).toEqual(0);
   expect(ctx.phase).toEqual("FLOP");
 
-  expect(G.playerStates).toEqual([
-    PLAYER_STATE.IN,
-    PLAYER_STATE.IN,
-    PLAYER_STATE.IN,
-  ]);
-  expect(G.playerLastMoves).toEqual([
-    PLAYER_MOVE.CALL,
-    PLAYER_MOVE.BET,
-    PLAYER_MOVE.CALL,
-  ]);
+  expect(G.players["0"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["1"].state).toEqual(PLAYER_STATE.IN);
+  expect(G.players["2"].state).toEqual(PLAYER_STATE.IN);
 
-  expect(G.playerStakes).toEqual([expectedStake, expectedStake, expectedStake]);
-  expect(G.playerChips).toEqual([
-    STARTING_CHIPS - expectedStake,
-    STARTING_CHIPS - expectedStake,
-    STARTING_CHIPS - expectedStake,
-  ]);
+  expect(G.players["0"].lastMove).toEqual(PLAYER_MOVE.CALL);
+  expect(G.players["1"].lastMove).toEqual(PLAYER_MOVE.BET);
+  expect(G.players["2"].lastMove).toEqual(PLAYER_MOVE.CALL);
+
+  expect(G.players["0"].stake).toEqual(expectedStake);
+  expect(G.players["1"].stake).toEqual(expectedStake);
+  expect(G.players["2"].stake).toEqual(expectedStake);
+
+  expect(G.players["0"].chips).toEqual(STARTING_CHIPS - expectedStake);
+  expect(G.players["1"].chips).toEqual(STARTING_CHIPS - expectedStake);
+  expect(G.players["2"].chips).toEqual(STARTING_CHIPS - expectedStake);
+
   expect(G.currentStake).toEqual(expectedStake);
   expect(G.phaseEndsAfter).toEqual(2);
 });

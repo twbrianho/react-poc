@@ -71,6 +71,8 @@ export const PLAYER_MOVE_TO_DISPLAY_MAP = new Map([
 ]);
 
 // PLAYER STATES
+// ALL-IN is a special state worth tracking because once they're all-in, they don't make any more moves.
+// FOLDED is a special state worth tracking because once they've folded, they're skipped entirely until the next game.
 export const PLAYER_STATE = {
   IN: "IN",
   ALL_IN: "ALLIN",
